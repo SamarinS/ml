@@ -3,5 +3,14 @@ CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    data.cpp \
+    solve_qp.cpp \
+    svm.cpp
+
+HEADERS += \
+    data.h \
+    linear_algebra.h \
+    solve_qp.h \
+    svm.h
 
