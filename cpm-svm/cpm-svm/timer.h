@@ -6,7 +6,7 @@
 // Windows time query
 
 #include <windows.h>
-#undef max
+#undef max // to call std::max
 
 inline long long gettimeus()
 {
