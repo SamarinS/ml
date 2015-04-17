@@ -28,18 +28,4 @@ struct Pair
 
 typedef std::vector< std::list<Pair> > SparseMat;
 
-
-
-
-#include <sys/time.h>
-
-inline long long gettimeus()
-{
-    struct timeval tv;
-
-    gettimeofday( &tv, NULL );
-    return (long long) tv.tv_sec * 1000000LL + (long long) tv.tv_usec;
-}
-
-
 #endif // LINEAR_ALGEBRA_H

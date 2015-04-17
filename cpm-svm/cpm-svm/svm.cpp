@@ -1,3 +1,4 @@
+#include "timer.h"
 #include "svm.h"
 
 #include <vector>
@@ -470,7 +471,7 @@ Real empRiskCP(const vector<Vec>& a, const vector<Real>& b, const Vec& w)
     Real val = inner_prod(w, a[0]) + b[0];
     for(unsigned i = 1;i<a.size();i++)
     {
-        val = std::max(val, inner_prod(w, a[i]) + b[i]);
+        val = std::max (val, inner_prod(w, a[i]) + b[i]);
     }
     return val;
 }

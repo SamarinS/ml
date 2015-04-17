@@ -4,9 +4,8 @@
 #include <iostream>
 
 
-//
 #include "solve_qp.h"
-
+#include "timer.h"
 
 using namespace std;
 
