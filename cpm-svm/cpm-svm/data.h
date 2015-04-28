@@ -6,7 +6,7 @@
 #include <list>
 
 #include "linear_algebra.h"
-
+#include <set>
 
 
 
@@ -27,8 +27,8 @@ public:
     const Vec& Responses() const;
     std::vector<int> TrainSampleIdx() const;
     std::vector<int> TestSampleIdx() const;
+    int LabelsNumber() const;
     unsigned VarNumber() const;
-
 
 private:
     void Clear();
@@ -39,6 +39,7 @@ private:
     SparseMat samples;
     Vec responses;
     unsigned varNumber;
+    std::set<float> labels;
 };
 
 

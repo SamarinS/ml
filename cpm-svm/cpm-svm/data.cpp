@@ -5,10 +5,6 @@
 #include <sstream>
 
 
-//================================
-//#include <iostream>
-//================================
-
 
 using namespace std;
 
@@ -117,6 +113,11 @@ bool Data::ReadFile(std::string filename)
     trainCount = n;
 
 
+    for(unsigned i = 0;i<responses.size();i++)
+    {
+        labels.insert(responses[i]);
+    }
+
 
     isLoaded = true;
     return true;
@@ -129,7 +130,7 @@ void Data::SetTrainTestSplit(float trainPortion)
     {
         throw Exception();
     }
-    trainCount = floor(trainPortion*samples.size());
+    trainCount = int( floor(trainPortion*samples.size()) );
 }
 
 
@@ -166,6 +167,11 @@ std::vector<int> Data::TestSampleIdx() const
 bool Data::IsLoaded() const
 {
     return isLoaded;
+}
+
+int Data::LabelsNumber() const
+{
+    return labels.size();
 }
 
 // Mix перемешивает выборку, используя rand для генерации случайных чисел

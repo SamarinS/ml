@@ -9,14 +9,15 @@
 
 #include "solve_qp.h"
 
+#ifdef QT_DEBUG
+#define BMRM_INFO
+#endif
 
 
 using namespace std;
 
 
-//static Real empRisk(const Data& data, const Vec& w);
 static Real empRiskCP(const vector<Vec>& a, const vector<Real>& b, const Vec& w);
-//static Vec empRiskSubgradient(const Data& data, const Vec& w);
 static Real Omega(const Vec& w);
 
 
@@ -84,112 +85,6 @@ void SVM::Train(const Data& data, const Real lambda, const Real epsilon_abs,
     }
 
 
-//    for(unsigned i = 0;i<responses.size();i++)
-//    {
-//        assert(responses[i]==-1 || responses[i]==1);
-//    }
-
-//    int d = data.VarNumber(); // размерность пространства признаков
-
-
-
-//    // Обучение
-//    //-----------------------------------
-//    Vec w(d);
-//    std::fill(w.begin(), w.end(), 0);
-//    int t = 0;
-//    Real currentEps = -1;
-//    vector<Vec> a;
-//    vector<Real> b, b2;
-
-
-
-//    do
-//    {
-//        t++;
-
-//        long long time_a = -gettimeus();
-//        a.push_back( empRiskSubgradient(data, w) );
-//        time_a += gettimeus();
-
-
-//        long long time_b = -gettimeus();
-//        b.push_back( empRisk(data, w) - inner_prod(w, a.back()) );
-//        time_b += gettimeus();
-
-//#ifdef BMRM_INFO
-//        cout << endl << "Iteration " << t << endl;
-////        cout << "empRisk(w) = " << empRisk(data, w) << endl;
-
-
-//        cout << "Subgradient calculating time: " << double(time_a)/1000000 << " seconds" << endl;
-//        cout << "Coef calculating time: " << double(time_b)/1000000 << " seconds" << endl;
-
-////        cout << "w[" << t-1 << "] = " << w << endl;
-////        cout << "a[" << t << "] = " << a.back() << endl;
-////        cout << "b[" << t << "] = " << b.back() << endl;
-//#endif
-
-
-
-//        //==========================================
-//        // argmin begin
-//        //==========================================
-//        Vec alpha(t);
-
-//        long long time_qp = -gettimeus();
-//        SolveQP(a, b, lambda, epsilon_tol*0.5, alpha);
-//        time_qp += gettimeus();
-
-
-
-
-//        // Получение w из alpha
-//        Vec temp(d);
-//        std::fill(temp.begin(), temp.end(), 0);
-//        for(int i = 0;i<t;i++)
-//        {
-//            temp = temp + alpha[i]*a[i];
-//        }
-//        w = -temp/lambda;
-
-//#ifdef BMRM_INFO
-//        cout << "J(w) = " << lambda*Omega(w)+empRisk(data, w) << endl;
-////        cout << "EmpRisk(w) = " << empRisk(data, w) << endl;
-////        cout << "EmpRiskCP(w) = " << empRiskCP(a, b, w) << endl;
-//#endif
-//        //==========================================
-//        // argmin end
-//        //==========================================
-
-
-//        currentEps = empRisk(data, w) - empRiskCP(a, b, w);
-
-//#ifdef BMRM_INFO
-//        cout << "QP solving time: " << double(time_qp)/1000000 << " seconds" << endl;
-
-//        cout << "Current epsilon = " << currentEps << endl;
-//#endif
-
-//    }
-//    while(
-//          currentEps>epsilon_abs
-//          && currentEps>epsilon_tol*(lambda*Omega(w)+empRisk(data, w))
-//          && t<tMax
-//         );
-
-
-//#ifdef BMRM_INFO
-//    cout << endl << endl;
-//    cout << "BMRM => J(w) = " << lambda*Omega(w)+empRisk(data, w) << endl;
-//    printf("BMRM => Achieved epsilon: %e \n", currentEps);
-//    printf("BMRM => Required abs epsilon: %e \n", epsilon_abs);
-//    printf("BMRM => Required tol epsilon: %e \n", epsilon_tol);
-//    cout << "BMRM => Number of iterations: " << t << " (max - " << tMax << ")" << endl;
-
-//    cout << "w = " << w << endl;
-//#endif
-
 
     betta.clear();
     for(int i = 0;i<classCount;i++)
@@ -223,21 +118,6 @@ void SVM::Train(const Data& data, const Real lambda, const Real epsilon_abs,
 
 Real SVM::Predict(const std::list<Pair>& sample) const
 {
-//    // проверка входных данных
-//    if(betta.size()==0 || betta.size()!=sample.size())
-//    {
-//        throw SVM::Exception();
-//    }
-
-//    if(inner_prod(betta, sample)<0)
-//    {
-//        return -1;
-//    }
-//    else
-//    {
-//        return 1;
-//    }
-
     assert(!betta.empty());
 
     int classCount = classLabels.size();
@@ -285,49 +165,6 @@ Real SVM::Predict(const std::list<Pair>& sample) const
 
 Real SVM::CalcError(const Data& data, int type) const
 {
-//    const vector<int>& trainSampleIdx = data.TrainSampleIdx();
-//    const vector<int>& testSampleIdx = data.TestSampleIdx();
-//    const vector<int>* sampleIdxPtr;
-//    if(type==TRAIN)
-//    {
-//        sampleIdxPtr = &trainSampleIdx;
-//    }
-//    else // type==TEST
-//    {
-//        sampleIdxPtr = &testSampleIdx;
-//    }
-//    const vector<int>& sampleIdx = *sampleIdxPtr;
-
-
-//    assert( data.VarNumber() == betta.size() );
-//    assert( sampleIdx.size() != 0 );
-
-
-//    int errorCount = 0;
-//    for(unsigned i = 0;i<sampleIdx.size();i++)
-//    {
-//        int row = sampleIdx[i];
-//        assert(data.Responses()[row]==-1.0 || data.Responses()[row]==1.0);
-
-//        Real pred = SparseProduct(row, data.Samples(), betta);
-//        if(pred<0)
-//        {
-//            pred = -1;
-//        }
-//        else
-//        {
-//            pred = 1;
-//        }
-
-//        if(pred*data.Responses()[row]<0)
-//        {
-//            errorCount++;
-//        }
-
-//    }
-//    return Real(errorCount)/sampleIdx.size();
-
-
     const vector<int>& trainSampleIdx = data.TrainSampleIdx();
     const vector<int>& testSampleIdx = data.TestSampleIdx();
     const vector<int>* sampleIdxPtr;
@@ -342,7 +179,6 @@ Real SVM::CalcError(const Data& data, int type) const
     const vector<int>& sampleIdx = *sampleIdxPtr;
 
 
-//    assert( data.VarNumber() == betta.size() );
     assert( sampleIdx.size() != 0 );
 
 
@@ -395,21 +231,6 @@ Real empRisk(const Data& data, const Vec& w)
 }
 
 
-
-//Real Product(int row, const Mat& mat, const Vec& vec)
-//{
-//    assert(mat.size2()==vec.size());
-//    assert(vec.size()!=0);
-
-//    Real sum = 0;
-//    for(int i = 0;i<vec.size();i++)
-//    {
-//        sum += mat(row, i)*vec[i];
-//    }
-//    return sum;
-//}
-
-
 Real SparseProduct(int rowIdx, const SparseMat& mat, const Vec& vec)
 {
     Real result = 0;
@@ -424,9 +245,6 @@ Real SparseProduct(int rowIdx, const SparseMat& mat, const Vec& vec)
 
     return result;
 }
-
-
-
 
 
 
