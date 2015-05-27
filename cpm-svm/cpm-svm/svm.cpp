@@ -3,7 +3,7 @@
 
 //#include <vector>
 //#include <assert.h>
-//#include <iostream>
+#include <iostream>
 //#include <stdio.h>
 //#include <map>
 
@@ -52,8 +52,8 @@
 //}
 
 
-void SVM::Train(double* data, int* resp, int n_samples, int n_vars,
-                 int row_offset, int col_offset,
+void SVM::Train(const double* data, const int* resp, int n_samples, int n_vars,
+                 int row_step, int col_step,
                  double lambda, double epsilonAbs, double epsilonTol, int tMax)
 {
     //const Vec responses = data.Responses();
@@ -80,7 +80,15 @@ void SVM::Train(double* data, int* resp, int n_samples, int n_vars,
 //    }
 
 
-
+    Data d(data, row_step, col_step);
+    for(int i = 0;i < n_samples;i++)
+    {
+        for(int j = 0;j < n_vars;j++)
+        {
+            std::cout << d(i, j) << " ";
+        }
+        std::cout << std::endl;
+    }
 
 
 //    betta.clear();

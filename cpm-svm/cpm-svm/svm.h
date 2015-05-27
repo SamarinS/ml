@@ -14,8 +14,8 @@ public:
     //enum {TRAIN, TEST};
     //class Exception {};
     //SVM();
-    void Train(double* data, int* resp, int n_samples, int n_vars,
-               int row_offset, int col_offset,
+    void Train(const double* data, const int* resp, int n_samples, int n_vars,
+               int row_step, int col_step,
                double lambda, double epsilonAbs, double epsilonTol, int tMax);
     //Real Predict(const std::list<Pair>& sample) const;
     //Real CalcError(const Data& data, int type) const;
@@ -27,6 +27,22 @@ private:
     double** betta;
 
     //std::vector<Real> classLabels;
+
+    class Data
+    {
+    public:
+        Data(const double* ptr, int row_step, int col_step)
+            : ptr(ptr), row_step(row_step), col_step(col_step) {}
+        double operator() (int i, int j) const
+        {
+            return *(double*)((char*)ptr + i*row_step + j*col_step);
+        }
+
+    private:
+        const double* ptr;
+        int row_step;
+        int col_step;
+    };
 };
 
 #endif // SVM_H
