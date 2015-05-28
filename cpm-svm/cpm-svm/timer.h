@@ -27,7 +27,7 @@ inline long long gettimeus()
 {
     struct timeval tv;
 
-    gettimeofday( &tv, NULL );
+    gettimeofday( &tv, 0 );
     return (long long) tv.tv_sec * 1000000LL + (long long) tv.tv_usec;
 }
 
