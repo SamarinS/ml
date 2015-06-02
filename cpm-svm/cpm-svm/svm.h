@@ -18,12 +18,16 @@ public:
                int row_step, int col_step,
                double lambda, double epsilon_abs, double epsilon_tol, int tMax);
     //Real Predict(const std::list<Pair>& sample) const;
+    void Predict(const double* data, int* pred,
+                 int n_samples, int n_vars,
+                 int row_step, int col_step) const;
     //Real CalcError(const Data& data, int type) const;
 
 
 private:
 
     std::vector<Vec> betta;
+    int n_classes;
 };
 
 class Data

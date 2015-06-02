@@ -61,9 +61,9 @@ void SVM::Train(const double* data, const int* resp, int n_samples, int n_vars,
 {
     //const Vec responses = data.Responses();
 
-    int classCount = 1 + *std::max_element(resp, resp+n_samples);
+    n_classes = 1 + *std::max_element(resp, resp+n_samples);
 
-    vector<vector<int> > classIdxVectors(classCount);
+    vector<vector<int> > classIdxVectors(n_classes);
     for(int i = 0;i<n_samples;i++)
     {
         int classNumber = resp[i];
@@ -83,9 +83,9 @@ void SVM::Train(const double* data, const int* resp, int n_samples, int n_vars,
 
 
     betta.clear();
-    for(int i = 0;i<classCount;i++)
+    for(int i = 0;i<n_classes;i++)
     {
-        for(int j = i+1;j<classCount;j++)
+        for(int j = i+1;j<n_classes;j++)
         {
             #ifdef BMRM_INFO
             cout << "class " << i << " vs " << j << endl;
@@ -101,54 +101,57 @@ void SVM::Train(const double* data, const int* resp, int n_samples, int n_vars,
 
 
 
-
-
-
 //double SVM::Predict(const std::list<Pair>& sample) const
-//{
-//    assert(!betta.empty());
 
-//    int classCount = classLabels.size();
-//    vector<int> classVote(classCount);
-//    std::fill(classVote.begin(), classVote.end(), 0);
-//    int k = 0;
-//    for(int i = 0;i<classCount;i++)
-//    {
-//        for(int j = i+1;j<classCount;j++)
-//        {
-//            double result = 0;
-//            list<Pair>::const_iterator iter = sample.begin();
-//            while(iter!=sample.end())
-//            {
-//                result += iter->value*betta[k][iter->idx-1];
-//                iter++;
-//            }
+void SVM::Predict(const double* data, int* pred,
+                  int n_samples, int n_vars,
+                  int row_step, int col_step) const
+{
+    assert(!betta.empty());
+
+    Data samples(data, row_step, col_step);
+
+    for(int sample_idx = 0;sample_idx<n_samples;sample_idx++)
+    {
+        vector<int> classVote(n_classes);
+        std::fill(classVote.begin(), classVote.end(), 0);
+        int k = 0;
+        for(int i = 0;i<n_classes;i++)
+        {
+            for(int j = i+1;j<n_classes;j++)
+            {
+                double result = 0;
+                for(int s = 0;s<n_vars;s++)
+                {
+                    result += samples(sample_idx, s)*betta[k][s];
+                }
 
 
-//            if(result < 0)
-//            {
-//                classVote[j]++;
-//            }
-//            else
-//            {
-//                classVote[i]++;
-//            }
-//            k++;
-//        }
-//    }
+                if(result < 0)
+                {
+                    classVote[j]++;
+                }
+                else
+                {
+                    classVote[i]++;
+                }
+                k++;
+            }
+        }
 
-//    int max_val = 0;
-//    int max_idx;
-//    for(unsigned i = 0;i<classVote.size();i++)
-//    {
-//        if(classVote[i] > max_val)
-//        {
-//            max_idx = i;
-//            max_val = classVote[i];
-//        }
-//    }
-//    return classLabels[max_idx];
-//}
+        int max_val = 0;
+        int max_idx;
+        for(unsigned i = 0;i<classVote.size();i++)
+        {
+            if(classVote[i] > max_val)
+            {
+                max_idx = i;
+                max_val = classVote[i];
+            }
+        }
+        pred[sample_idx] = max_idx;
+    }
+}
 
 
 //double SVM::CalcError(const Data& data, int type) const
@@ -201,23 +204,6 @@ double Omega(const Vec& w)
     return double(0.5)*inner_prod(w, w);
 }
 
-//double empRisk(const Data& data, const Vec& w)
-//{
-//    Vec responses = data.Responses();
-//    vector<int> trainSampleIdx = data.TrainSampleIdx();
-
-//    double sum = 0;
-//    for(unsigned i = 0;i<trainSampleIdx.size();i++)
-//    {
-//        int idx = trainSampleIdx[i];
-//        sum += max(  double(0), 1-responses[idx]*SparseProduct(idx, data.Samples(), w)  );
-//    }
-
-//    sum /= trainSampleIdx.size();
-
-//    return sum;
-//}
-
 
 double SparseProduct(int rowIdx, const Data& samples, const Vec& vec)
 {
@@ -230,43 +216,6 @@ double SparseProduct(int rowIdx, const Data& samples, const Vec& vec)
 
     return result;
 }
-
-
-
-//Vec empRiskSubgradient(const Data& data, const Vec& w)
-//{
-//    Vec responses = data.Responses();
-//    vector<int> trainSampleIdx = data.TrainSampleIdx();
-
-//    Vec subgr;
-//    subgr.resize(w.size());
-//    for(unsigned i = 0;i<subgr.size();i++)
-//    {
-//        subgr[i] = 0;
-//    }
-
-//    for(unsigned i = 0;i<trainSampleIdx.size();i++)
-//    {
-//        int idx = trainSampleIdx[i];
-//        double maxVal = max(  double(0), 1-responses[idx]*SparseProduct(idx, data.Samples(), w)  );
-//        if(maxVal > 0)
-//        {
-//            const list<Pair>& row = data.Samples()[idx];
-//            list<Pair>::const_iterator iter = row.begin();
-//            while(iter!=row.end())
-//            {
-//                subgr[iter->idx-1] += -responses[idx]*iter->value;
-//                iter++;
-//            }
-//        }
-//    }
-
-//    //=================================
-//    subgr /= trainSampleIdx.size();
-//    //=================================
-
-//    return subgr;
-//}
 
 
 double empRiskCP(const vector<Vec>& a, const vector<double>& b, const Vec& w)

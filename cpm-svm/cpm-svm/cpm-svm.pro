@@ -3,7 +3,6 @@ TEMPLATE = lib
 CONFIG -= app_bundle
 CONFIG -= qt
 
-INCLUDEPATH += "D:/DevTools/boost_1_57_0"
 
 SOURCES += \
     solve_qp.cpp \
@@ -15,9 +14,12 @@ HEADERS += \
     timer.h \
     linear_algebra.h
 
-CONFIG(debug)
-{
+CONFIG(debug, debug|release) {
     DEFINES += "BMRM_INFO"
+}
+
+CONFIG(release, debug|release) {
+    DEFINES += "NDEBUG"
 }
 
 

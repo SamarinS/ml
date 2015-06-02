@@ -34,48 +34,22 @@ int main()
 
     SVM clf;
 
-    const int d_size = 6;
-    double data[d_size];
-    for(int i = 0;i<d_size;i++)
-    {
-        data[i] = i;
-    }
+    const int n_samples = 4;
+    const int n_vars = 2;
+    double data[n_samples*n_vars] = {1., 0.,
+                    0., -1.,
+                    -1., 0.,
+                    0., 1.};
 
-//    double p = *(data + 2);
-
-    const int r_size = 4;
-    int resp[r_size];
-    for(int i = 0;i<r_size;i++)
-    {
-//        if(i%2==0)
-//        {
-//            resp[i] = 0;
-//        }
-//        else
-//        {
-//            resp[i] = 1;
-//        }
-        resp[i] = i;
-    }
+    int resp[n_samples] = {0, 0, 1, 1};
 
     int row_step = 2*sizeof(double);
     int col_step = sizeof(double);
-    int n_samples = 3;
-    int n_vars = 2;
-//    Data d(data, row_step, col_step);
-//    for(int i = 0;i < n_samples;i++)
-//    {
-//        for(int j = 0;j < n_vars;j++)
-//        {
-//            std::cout << d(i, j) << " ";
-//        }
-//        std::cout << std::endl;
-//    }
+
     clf.Train(data, resp, n_samples, n_vars, row_step, col_step, 1., 0., 0.01, 100);
 
-    Vec vec(2);
-    vec(0) = 1;
-    vec(1) = 2;
+    int pred[n_samples];
+    clf.Predict(data, pred, n_samples, n_vars, row_step, col_step);
 
     return 0;
 }
