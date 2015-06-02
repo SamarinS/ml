@@ -25,6 +25,7 @@ using namespace std;
 //    int col_step;
 //};
 
+
 int main()
 {
     cout << "Hello World!" << endl;
@@ -46,19 +47,20 @@ int main()
     int resp[r_size];
     for(int i = 0;i<r_size;i++)
     {
-        if(i%2==0)
-        {
-            resp[i] = 0;
-        }
-        else
-        {
-            resp[i] = 1;
-        }
+//        if(i%2==0)
+//        {
+//            resp[i] = 0;
+//        }
+//        else
+//        {
+//            resp[i] = 1;
+//        }
+        resp[i] = i;
     }
 
-    int row_step = 3*sizeof(double);
+    int row_step = 2*sizeof(double);
     int col_step = sizeof(double);
-    int n_samples = 2;
+    int n_samples = 3;
     int n_vars = 2;
 //    Data d(data, row_step, col_step);
 //    for(int i = 0;i < n_samples;i++)
@@ -70,6 +72,11 @@ int main()
 //        std::cout << std::endl;
 //    }
     clf.Train(data, resp, n_samples, n_vars, row_step, col_step, 1., 0., 0.01, 100);
+
+    Vec vec(2);
+    vec(0) = 1;
+    vec(1) = 2;
+
     return 0;
 }
 

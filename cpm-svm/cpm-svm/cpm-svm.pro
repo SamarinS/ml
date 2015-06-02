@@ -12,7 +12,13 @@ SOURCES += \
 HEADERS += \
     solve_qp.h \
     svm.h \
-    timer.h
+    timer.h \
+    linear_algebra.h
+
+CONFIG(debug)
+{
+    DEFINES += "BMRM_INFO"
+}
 
 
 
