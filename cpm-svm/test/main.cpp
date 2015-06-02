@@ -41,15 +41,17 @@ int main()
                     -1., 0.,
                     0., 1.};
 
-    int resp[n_samples] = {0, 0, 1, 1};
+    long resp[n_samples] = {0, 0, 1, 1};
 
     int row_step = 2*sizeof(double);
     int col_step = sizeof(double);
 
     clf.Train(data, resp, n_samples, n_vars, row_step, col_step, 1., 0., 0.01, 100);
 
-    int pred[n_samples];
+    long pred[n_samples];
     clf.Predict(data, pred, n_samples, n_vars, row_step, col_step);
+
+    cout << sizeof(long) << endl;
 
     return 0;
 }

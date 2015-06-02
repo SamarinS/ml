@@ -55,18 +55,18 @@ static Vec TrainBinarySVM( const Data& samples,
 //}
 
 
-void SVM::Train(const double* data, const int* resp, int n_samples, int n_vars,
+void SVM::Train(const double* data, const long* resp, int n_samples, int n_vars,
                  int row_step, int col_step,
                  double lambda, double epsilon_abs, double epsilon_tol, int tMax)
 {
     //const Vec responses = data.Responses();
 
-    n_classes = 1 + *std::max_element(resp, resp+n_samples);
+    n_classes = int(1 + *std::max_element(resp, resp+n_samples));
 
     vector<vector<int> > classIdxVectors(n_classes);
     for(int i = 0;i<n_samples;i++)
     {
-        int classNumber = resp[i];
+        int classNumber = int(resp[i]);
         classIdxVectors[classNumber].push_back(i);
     }
 
@@ -103,7 +103,7 @@ void SVM::Train(const double* data, const int* resp, int n_samples, int n_vars,
 
 //double SVM::Predict(const std::list<Pair>& sample) const
 
-void SVM::Predict(const double* data, int* pred,
+void SVM::Predict(const double* data, long *pred,
                   int n_samples, int n_vars,
                   int row_step, int col_step) const
 {
@@ -149,7 +149,7 @@ void SVM::Predict(const double* data, int* pred,
                 max_val = classVote[i];
             }
         }
-        pred[sample_idx] = max_idx;
+        pred[sample_idx] = long(max_idx);
     }
 }
 
