@@ -9,10 +9,6 @@
 
 #include "solve_qp.h"
 
-#ifdef QT_DEBUG
-#define BMRM_INFO
-#endif
-
 
 using namespace std;
 
@@ -190,10 +186,10 @@ Real SVM::CalcError(const Data& data, int type) const
         Real pred = this->Predict(data.Samples()[row]);
         Real actual = data.Responses()[row];
 
-        #ifdef BMRM_INFO
-        cout << "row = " << row;
-        cout << " actual = " << actual << " pred = " << pred << endl;
-        #endif
+//        #ifdef BMRM_INFO
+//        cout << "row = " << row;
+//        cout << " actual = " << actual << " pred = " << pred << endl;
+//        #endif
 
         if(pred != actual)
         {
@@ -311,6 +307,7 @@ static Vec TrainBinarySVM( const Data& data,
     Real currentEps = -1;
     vector<Vec> a;
     vector<Real> b;
+    vector<Real> gram_memory;
 
 
 
@@ -350,7 +347,7 @@ static Vec TrainBinarySVM( const Data& data,
         Vec alpha(t);
 
         long long time_qp = -gettimeus();
-        SolveQP(a, b, lambda, epsilon_tol*0.5, alpha);
+        SolveQP(gram_memory, a, b, lambda, epsilon_tol*0.5, alpha);
         time_qp += gettimeus();
 
 
@@ -399,7 +396,7 @@ static Vec TrainBinarySVM( const Data& data,
     printf("BMRM => Required tol epsilon: %e \n", epsilon_tol);
     cout << "BMRM => Number of iterations: " << t << " (max - " << tMax << ")" << endl;
 
-    cout << "w = " << w << endl;
+//    cout << "w = " << w << endl;
 #endif
 
 

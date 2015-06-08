@@ -1,10 +1,18 @@
 #include "solve_qp.h"
 
 
+#ifdef BMRM_INFO
+#include "timer.h"
+#include <iostream>
+
+using namespace std;
+#endif //BMRM_INFO
+
+
 Real Delta(const Vec& alpha, const Vec& b_minus_H_alpha, const Mat& H, int u, int v);
 
 
-void SolveQP(std::vector<Vec>& a, std::vector<Real>& b, Real lambda, Real epsilon_tol,
+void SolveQP(std::vector<Real> &gram_memory, std::vector<Vec>& a, std::vector<Real>& b, Real lambda, Real epsilon_tol,
              Vec& alpha)
 {
     int n = b.size();
@@ -14,21 +22,61 @@ void SolveQP(std::vector<Vec>& a, std::vector<Real>& b, Real lambda, Real epsilo
         bVec[i] = b[i];
     }
 
+//    //==========================count density
+//    int count = 0;
+//    Vec& v = a[n-1];
+//    for(int i = 0;i<v.size();i++)
+//    {
+//        if(v(i)!=0)
+//        {
+//            count++;
+//        }
+//    }
+//    cout << "density " << double(count)/v.size()*100 << "%" << endl;
+//    //==========================
+
     std::fill(alpha.begin(), alpha.end(), 1./n);
 
     Mat H(n, n);
+
+    ///===========================
+    /// begin calculating matrix H
+    /// ==========================
+#ifdef BMRM_INFO
+    long long time_Hnn_calc = -gettimeus();
+#endif //BMRM_INFO
+
     for(int i = 0;i<n;i++)
     {
-        for(int j = 0;j<n;j++)
+        gram_memory.push_back(inner_prod(a[i], a[n-1]));
+    }
+
+    for(int i = 0;i<n;i++)
+    {
+        for(int j = i;j<n;j++)
         {
-            H(i,j) = inner_prod(a[i], a[j]);
+            H(i,j) = gram_memory[j*(j+1)/2 + i] / lambda;
+            H(j,i) = H(i,j);
         }
     }
-    H = H / lambda;
-
+#ifdef BMRM_INFO
+    time_Hnn_calc += gettimeus();
+#endif //BMRM_INFO
+    ///===========================
+    /// end calculating matrix H
+    /// ==========================
 
     Vec b_minus_H_alpha = bVec - prod(H, alpha);
 
+
+    ///===========================
+    /// begin search loop
+    /// ==========================
+#ifdef BMRM_INFO
+    long long time_while = -gettimeus();
+#endif //BMRM_INFO
+
+    int iter_count = 0;
     while( *std::max_element(b_minus_H_alpha.begin(), b_minus_H_alpha.end()) -
            inner_prod(alpha, b_minus_H_alpha)
            >
@@ -77,7 +125,18 @@ void SolveQP(std::vector<Vec>& a, std::vector<Real>& b, Real lambda, Real epsilo
         alpha = (1-tau)*alpha + tau*betta;
         b_minus_H_alpha = bVec-prod(H,alpha);
 
+        iter_count++;
     }
+
+    ///===========================
+    /// end search loop
+    /// ==========================
+#ifdef BMRM_INFO
+    time_while += gettimeus();
+    cout << "QP Hnn_calc time: " << double(time_Hnn_calc)/1000000 << " seconds" << endl;
+    cout << "QP cycle time: " << double(time_while)/1000000 << " seconds" << endl;
+    std::cout << "QP iter number: " << iter_count << std::endl;
+#endif //BMRM_INFO
 }
 
 

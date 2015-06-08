@@ -3,7 +3,6 @@ CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
 
-INCLUDEPATH += "D:/DevTools/boost_1_57_0"
 
 SOURCES += main.cpp \
     data.cpp \
@@ -16,6 +15,14 @@ HEADERS += \
     solve_qp.h \
     svm.h \
     timer.h
+
+CONFIG(debug, debug|release) {
+    DEFINES += "BMRM_INFO"
+}
+
+CONFIG(release, debug|release) {
+    DEFINES += "NDEBUG"
+}
 
 
 
