@@ -55,7 +55,8 @@ def split_data(X, y):
     print "n_classes", np.unique(y).shape[0]
     return {"X_train":X_train, "X_test":X_test, "y_train":y_train, "y_test":y_test}
 
-def load_uci_data(name, d=','):  
+def load_uci_data(name, d=','):
+    name = '/home/sergey/uci_data/'+name  
     data = np.loadtxt(name, delimiter=d)
     print "dataset:", name
     X = data[:,:-1]
@@ -66,6 +67,7 @@ def load_libsvm_data(name):
     from sklearn.datasets.svmlight_format import load_svmlight_file
     from sklearn.cross_validation import train_test_split
     
+    name = '/home/sergey/libsvm_data/'+name
     X, y = load_svmlight_file(name)
     print "dataset:", name
     return split_data(X, y)
