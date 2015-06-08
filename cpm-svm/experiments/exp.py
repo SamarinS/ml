@@ -4,7 +4,6 @@ from cpm_svm import CPM_SVM as cpm_svm
 from sklearn.svm import SVC as svm
 from sklearn.ensemble import RandomForestClassifier as rf
 from sklearn.ensemble import GradientBoostingClassifier as gbt
-from sklearn.svm import LinearSVC as liblinear
 
 svm_params = [
         {'C': [1, 10, 100, 1000], 'kernel': ['linear']},
@@ -13,7 +12,6 @@ svm_params = [
 cpm_svm_params = [{'lambda_coef': [1., 0.1, 0.01, 0.001]}]
 rf_params = [{'n_estimators': [5, 20, 70, 250, 1000]}]
 gbt_params = [{'n_estimators':[5, 20, 70, 250, 1000], 'learning_rate':[0.3, 0.8, 1.0]}]
-liblinear_params = [{'C': [1, 10, 100, 1000]}]
 
 
 def experiment(data, model, tuned_params, verbosity=100):
@@ -57,8 +55,7 @@ def split_data(X, y):
     print "n_classes", np.unique(y).shape[0]
     return {"X_train":X_train, "X_test":X_test, "y_train":y_train, "y_test":y_test}
 
-def load_uci_data(name, d=','):
-    name = '/home/sergey/uci_data/' + name
+def load_uci_data(name, d=','):  
     data = np.loadtxt(name, delimiter=d)
     print "dataset:", name
     X = data[:,:-1]
@@ -69,8 +66,8 @@ def load_libsvm_data(name):
     from sklearn.datasets.svmlight_format import load_svmlight_file
     from sklearn.cross_validation import train_test_split
     
-    name = '/home/sergey/libsvm_data/' + name
     X, y = load_svmlight_file(name)
     print "dataset:", name
     return split_data(X, y)
     
+
