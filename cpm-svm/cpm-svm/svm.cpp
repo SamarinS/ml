@@ -246,7 +246,7 @@ static Vec TrainBinarySVM( const Data& samples,
     double currentEps = -1;
     vector<Vec> a;
     vector<double> b;
-
+    vector<double> gram_memory;
 
 
     do
@@ -285,7 +285,7 @@ static Vec TrainBinarySVM( const Data& samples,
         Vec alpha(t);
 
         long long time_qp = -gettimeus();
-        SolveQP(a, b, lambda, epsilon_tol*0.5, alpha);
+        SolveQP(gram_memory, a, b, lambda, epsilon_tol*0.5, alpha);
         time_qp += gettimeus();
 
 

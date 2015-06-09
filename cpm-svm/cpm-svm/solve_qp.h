@@ -3,10 +3,9 @@
 
 #include "linear_algebra.h"
 
-typedef double Real;
 
 
-void SolveQP(std::vector<Vec>& a, std::vector<Real>& b, Real lambda, Real epsilon_tol,
+void SolveQP(std::vector<double>& gram_memory, std::vector<Vec>& a, std::vector<double>& b, double lambda, double epsilon_tol,
              Vec& alpha);
 
 
