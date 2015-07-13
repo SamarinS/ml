@@ -3,7 +3,7 @@
 
 
 #include "linear_algebra.h"
-//#include "data.h"
+#include "data.h"
 
 
 
@@ -14,13 +14,16 @@ public:
     //enum {TRAIN, TEST};
     //class Exception {};
     //SVM();
-    void Train(const double* data, const long* resp, int n_samples, int n_vars,
-               int row_step, int col_step,
+//    void Train(const double* data, const long* resp, int n_samples, int n_vars,
+//               int row_step, int col_step,
+//               double lambda, double epsilon_abs, double epsilon_tol, int tMax);
+    void Train(const BaseData& data, const long* resp,
                double lambda, double epsilon_abs, double epsilon_tol, int tMax);
     //Real Predict(const std::list<Pair>& sample) const;
-    void Predict(const double* data, long* pred,
-                 int n_samples, int n_vars,
-                 int row_step, int col_step) const;
+//    void Predict(const double* data, long* pred,
+//                 int n_samples, int n_vars,
+//                 int row_step, int col_step) const;
+    void Predict(const BaseData& data, long* pred) const;
     //Real CalcError(const Data& data, int type) const;
 
 
@@ -30,20 +33,5 @@ private:
     int n_classes;
 };
 
-class Data
-{
-public:
-    Data(const double* ptr, int row_step, int col_step)
-        : ptr(ptr), row_step(row_step), col_step(col_step) {}
-    double operator() (int i, int j) const
-    {
-        return *(double*)((char*)ptr + i*row_step + j*col_step);
-    }
-
-private:
-    const double* ptr;
-    int row_step;
-    int col_step;
-};
 
 #endif // SVM_H

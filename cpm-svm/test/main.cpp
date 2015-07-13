@@ -46,12 +46,23 @@ int main()
     int row_step = 2*sizeof(double);
     int col_step = sizeof(double);
 
-    clf.Train(data, resp, n_samples, n_vars, row_step, col_step, 1., 0., 0.01, 100);
+    BaseData* denseData = new DenseData(data, n_samples, n_vars, row_step, col_step);
+
+    clf.Train(*denseData, resp, 1., 0., 0.01, 100);
 
     long pred[n_samples];
-    clf.Predict(data, pred, n_samples, n_vars, row_step, col_step);
+    clf.Predict(*denseData, pred);
 
-    cout << sizeof(long) << endl;
+//    cout << sizeof(long) << endl;
+
+
+//
+//    Vec v(n_vars);
+//    v[0] = 3;
+//    v[1] = 4;
+//    cout << denseData->multiply_row_by_Vec(3, v) << endl;
+//    denseData->add_row_multiplyed_by_value(v, 2, 5);
+//    cout << v << endl;
 
     return 0;
 }

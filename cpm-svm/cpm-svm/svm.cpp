@@ -26,27 +26,43 @@ static double Omega(const Vec& w);
 static double SparseProduct(int rowIdx, const Data& samples, const Vec& vec);
 
 
-static double empRiskBinary(const Data& samples,
+//static double empRiskBinary(const Data& samples,
+//                    const std::vector<int>& firstClassIdx,
+//                    const std::vector<int>& secondClassIdx,
+//                    const Vec& w);
+
+static double empRiskBinary(const BaseData& data,
                     const std::vector<int>& firstClassIdx,
                     const std::vector<int>& secondClassIdx,
                     const Vec& w);
 
-static Vec empRiskSubgradientOneClass(const Data& samples,
+static Vec empRiskSubgradientOneClass(const BaseData& data,
                               const std::vector<int>& classSampleIdx,
                               double y,
                               const Vec& w);
 
-static Vec empRiskSubgradientBinary(const Data& samples,
+//static Vec empRiskSubgradientBinary(const Data& samples,
+//                              const std::vector<int>& firstClassIdx,
+//                              const std::vector<int>& secondClassIdx,
+//                              const Vec& w);
+
+static Vec empRiskSubgradientBinary(const BaseData& data,
                               const std::vector<int>& firstClassIdx,
                               const std::vector<int>& secondClassIdx,
                               const Vec& w);
 
-static Vec TrainBinarySVM( const Data& samples,
-                            const int n_vars,
+//static Vec TrainBinarySVM( const Data& samples,
+//                            const int n_vars,
+//                            const std::vector<int>& firstClassIdx,
+//                            const std::vector<int>& secondClassIdx,
+//                            const double lambda,  const double epsilonAbs,
+//                            const double epsilonTol, const int tMax);
+
+static Vec TrainBinarySVM(const BaseData& data,
                             const std::vector<int>& firstClassIdx,
                             const std::vector<int>& secondClassIdx,
-                            const double lambda,  const double epsilonAbs,
-                            const double epsilonTol, const int tMax);
+                            const double lambda,  const double epsilon_abs,
+                            const double epsilon_tol, const int tMax);
 
 ////--------------------------------------------------------------------------------
 
@@ -55,13 +71,13 @@ static Vec TrainBinarySVM( const Data& samples,
 //}
 
 
-void SVM::Train(const double* data, const long* resp, int n_samples, int n_vars,
-                 int row_step, int col_step,
+void SVM::Train(const BaseData &data, const long* resp,
                  double lambda, double epsilon_abs, double epsilon_tol, int tMax)
 {
     //const Vec responses = data.Responses();
+    const int n_samples = data.rows();
 
-    n_classes = int(1 + *std::max_element(resp, resp+n_samples));
+    n_classes = int(1 + *std::max_element(resp, resp + n_samples));
 
     vector<vector<int> > classIdxVectors(n_classes);
     for(int i = 0;i<n_samples;i++)
@@ -71,7 +87,6 @@ void SVM::Train(const double* data, const long* resp, int n_samples, int n_vars,
     }
 
 
-    Data samples(data, row_step, col_step);
 //    for(int i = 0;i < n_samples;i++)
 //    {
 //        for(int j = 0;j < n_vars;j++)
@@ -90,8 +105,7 @@ void SVM::Train(const double* data, const long* resp, int n_samples, int n_vars,
             #ifdef BMRM_INFO
             cout << "class " << i << " vs " << j << endl;
             #endif
-            Vec w = TrainBinarySVM(samples,
-                                   n_vars,
+            Vec w = TrainBinarySVM(data,
                                    classIdxVectors[i], classIdxVectors[j],
                                     lambda, epsilon_abs, epsilon_tol, tMax);
             betta.push_back(w);
@@ -103,15 +117,12 @@ void SVM::Train(const double* data, const long* resp, int n_samples, int n_vars,
 
 //double SVM::Predict(const std::list<Pair>& sample) const
 
-void SVM::Predict(const double* data, long *pred,
-                  int n_samples, int n_vars,
-                  int row_step, int col_step) const
+void SVM::Predict(const BaseData &data, long *pred) const
 {
     assert(!betta.empty());
 
-    Data samples(data, row_step, col_step);
 
-    for(int sample_idx = 0;sample_idx<n_samples;sample_idx++)
+    for(int sample_idx = 0;sample_idx<data.rows();sample_idx++)
     {
         vector<int> classVote(n_classes);
         std::fill(classVote.begin(), classVote.end(), 0);
@@ -120,11 +131,13 @@ void SVM::Predict(const double* data, long *pred,
         {
             for(int j = i+1;j<n_classes;j++)
             {
-                double result = 0;
-                for(int s = 0;s<n_vars;s++)
-                {
-                    result += samples(sample_idx, s)*betta[k][s];
-                }
+//                double result = 0;
+//                for(int s = 0;s<n_vars;s++)
+//                {
+//                    result += samples(sample_idx, s)*betta[k][s];
+//                }
+
+                double result = data.multiply_row_by_Vec(sample_idx, betta[k]);
 
 
                 if(result < 0)
@@ -230,14 +243,13 @@ double empRiskCP(const vector<Vec>& a, const vector<double>& b, const Vec& w)
 
 
 
-static Vec TrainBinarySVM( const Data& samples,
-                            const int n_vars,
+static Vec TrainBinarySVM(const BaseData& data,
                             const std::vector<int>& firstClassIdx,
                             const std::vector<int>& secondClassIdx,
                             const double lambda,  const double epsilon_abs,
                             const double epsilon_tol, const int tMax)
 {
-    int d = n_vars; // размерность пространства признаков
+    int d = data.cols(); // размерность пространства признаков
 
 
     Vec w(d);
@@ -254,13 +266,13 @@ static Vec TrainBinarySVM( const Data& samples,
         t++;
 
         long long time_a = -gettimeus();
-        a.push_back( empRiskSubgradientBinary(samples, firstClassIdx, secondClassIdx, w) );
+        a.push_back( empRiskSubgradientBinary(data, firstClassIdx, secondClassIdx, w) );
         time_a += gettimeus();
 
 
         long long time_b = -gettimeus();
         b.push_back(
-                    empRiskBinary(samples, firstClassIdx, secondClassIdx, w) - inner_prod(w, a.back())
+                    empRiskBinary(data, firstClassIdx, secondClassIdx, w) - inner_prod(w, a.back())
                    );
         time_b += gettimeus();
 
@@ -301,7 +313,7 @@ static Vec TrainBinarySVM( const Data& samples,
         w = -temp/lambda;
 
 #ifdef BMRM_INFO
-        cout << "J(w) = " << lambda*Omega(w)+empRiskBinary(samples, firstClassIdx, secondClassIdx, w) << endl;
+        cout << "J(w) = " << lambda*Omega(w)+empRiskBinary(data, firstClassIdx, secondClassIdx, w) << endl;
 //        cout << "EmpRisk(w) = " << empRisk(data, w) << endl;
 //        cout << "EmpRiskCP(w) = " << empRiskCP(a, b, w) << endl;
 #endif
@@ -310,7 +322,7 @@ static Vec TrainBinarySVM( const Data& samples,
         //==========================================
 
 
-        currentEps = empRiskBinary(samples, firstClassIdx, secondClassIdx, w) - empRiskCP(a, b, w);
+        currentEps = empRiskBinary(data, firstClassIdx, secondClassIdx, w) - empRiskCP(a, b, w);
 
 #ifdef BMRM_INFO
         cout << "QP solving time: " << double(time_qp)/1000000 << " seconds" << endl;
@@ -321,14 +333,14 @@ static Vec TrainBinarySVM( const Data& samples,
     }
     while(
           currentEps>epsilon_abs
-          && currentEps>epsilon_tol*(lambda*Omega(w)+empRiskBinary(samples, firstClassIdx, secondClassIdx, w))
+          && currentEps>epsilon_tol*(lambda*Omega(w)+empRiskBinary(data, firstClassIdx, secondClassIdx, w))
           && t<tMax
          );
 
 
 #ifdef BMRM_INFO
     cout << endl << endl;
-    cout << "BMRM => J(w) = " << lambda*Omega(w)+empRiskBinary(samples, firstClassIdx, secondClassIdx, w) << endl;
+    cout << "BMRM => J(w) = " << lambda*Omega(w)+empRiskBinary(data, firstClassIdx, secondClassIdx, w) << endl;
     printf("BMRM => Achieved epsilon: %e \n", currentEps);
     printf("BMRM => Required abs epsilon: %e \n", epsilon_abs);
     printf("BMRM => Required tol epsilon: %e \n", epsilon_tol);
@@ -342,7 +354,7 @@ static Vec TrainBinarySVM( const Data& samples,
 }
 
 
-double empRiskBinary(const Data& samples,
+static double empRiskBinary(const BaseData& data,
                     const std::vector<int>& firstClassIdx,
                     const std::vector<int>& secondClassIdx,
                     const Vec& w)
@@ -351,12 +363,14 @@ double empRiskBinary(const Data& samples,
     for(unsigned i = 0;i<firstClassIdx.size();i++)
     {
         int idx = firstClassIdx[i];
-        sum += max(  double(0), 1 - SparseProduct(idx, samples, w)  );
+//        sum += max(  double(0), 1 - SparseProduct(idx, samples, w)  );
+        sum += max(  double(0), 1 - data.multiply_row_by_Vec(idx, w)  );
     }
     for(unsigned i = 0;i<secondClassIdx.size();i++)
     {
         int idx = secondClassIdx[i];
-        sum += max(  double(0), 1 + SparseProduct(idx, samples, w)  );
+//        sum += max(  double(0), 1 + SparseProduct(idx, samples, w)  );
+        sum += max(  double(0), 1 + data.multiply_row_by_Vec(idx, w)  );
     }
 
     sum /= firstClassIdx.size() + secondClassIdx.size();
@@ -365,23 +379,23 @@ double empRiskBinary(const Data& samples,
 }
 
 
-Vec empRiskSubgradientBinary(const Data& samples,
+static Vec empRiskSubgradientBinary(const BaseData& data,
                               const std::vector<int>& firstClassIdx,
                               const std::vector<int>& secondClassIdx,
                               const Vec& w)
 {
-    empRiskSubgradientOneClass(samples, firstClassIdx, 1.0, w);
+    empRiskSubgradientOneClass(data, firstClassIdx, 1.0, w);
 
     Vec subgr =
-            empRiskSubgradientOneClass(samples, firstClassIdx, 1.0, w) +
-            empRiskSubgradientOneClass(samples, secondClassIdx, -1.0, w);
+            empRiskSubgradientOneClass(data, firstClassIdx, 1.0, w) +
+            empRiskSubgradientOneClass(data, secondClassIdx, -1.0, w);
 
     subgr /= firstClassIdx.size()+secondClassIdx.size();
     return subgr;
 }
 
 
-Vec empRiskSubgradientOneClass(const Data& samples,
+Vec empRiskSubgradientOneClass(const BaseData &data,
                               const std::vector<int>& classSampleIdx,
                               double y,
                               const Vec& w)
@@ -393,13 +407,15 @@ Vec empRiskSubgradientOneClass(const Data& samples,
     for(unsigned i = 0;i<classSampleIdx.size();i++)
     {
         int idx = classSampleIdx[i];
-        double maxVal = max(  double(0), 1-y*SparseProduct(idx, samples, w)  );
+//        double maxVal = max(  double(0), 1-y*SparseProduct(idx, data, w)  );
+        double maxVal = max(  double(0), 1-y*data.multiply_row_by_Vec(idx, w) );
         if(maxVal > 0)
         {
-            for(int i = 0;i<subgr.size();i++)
-            {
-                subgr(i) += -y*samples(idx, i);
-            }
+//            for(int i = 0;i<subgr.size();i++)
+//            {
+//                subgr(i) += -y*data(idx, i);
+//            }
+            data.add_row_multiplyed_by_value(subgr, idx, -y);
         }
     }
 
