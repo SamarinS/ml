@@ -1,19 +1,11 @@
-#include "timer.h"
-#include "svm.h"
-
-//#include <vector>
-//#include <assert.h>
 #include <iostream>
 #include <algorithm>
 #include <vector>
 #include <stdio.h>
-//#include <map>
 
+#include "svm.h"
+#include "timer.h"
 #include "solve_qp.h"
-
-//#ifdef QT_DEBUG
-//#define BMRM_INFO
-//#endif
 
 
 using namespace std;
@@ -22,14 +14,6 @@ using namespace std;
 static double empRiskCP(const vector<Vec>& a, const vector<double>& b, const Vec& w);
 static double Omega(const Vec& w);
 
-
-static double SparseProduct(int rowIdx, const Data& samples, const Vec& vec);
-
-
-//static double empRiskBinary(const Data& samples,
-//                    const std::vector<int>& firstClassIdx,
-//                    const std::vector<int>& secondClassIdx,
-//                    const Vec& w);
 
 static double empRiskBinary(const BaseData& data,
                     const std::vector<int>& firstClassIdx,
@@ -41,22 +25,10 @@ static Vec empRiskSubgradientOneClass(const BaseData& data,
                               double y,
                               const Vec& w);
 
-//static Vec empRiskSubgradientBinary(const Data& samples,
-//                              const std::vector<int>& firstClassIdx,
-//                              const std::vector<int>& secondClassIdx,
-//                              const Vec& w);
-
 static Vec empRiskSubgradientBinary(const BaseData& data,
                               const std::vector<int>& firstClassIdx,
                               const std::vector<int>& secondClassIdx,
                               const Vec& w);
-
-//static Vec TrainBinarySVM( const Data& samples,
-//                            const int n_vars,
-//                            const std::vector<int>& firstClassIdx,
-//                            const std::vector<int>& secondClassIdx,
-//                            const double lambda,  const double epsilonAbs,
-//                            const double epsilonTol, const int tMax);
 
 static Vec TrainBinarySVM(const BaseData& data,
                             const std::vector<int>& firstClassIdx,
@@ -66,15 +38,9 @@ static Vec TrainBinarySVM(const BaseData& data,
 
 ////--------------------------------------------------------------------------------
 
-//SVM::SVM()
-//{
-//}
-
-
 void SVM::Train(const BaseData &data, const long* resp,
                  double lambda, double epsilon_abs, double epsilon_tol, int tMax)
 {
-    //const Vec responses = data.Responses();
     const int n_samples = data.rows();
 
     n_classes = int(1 + *std::max_element(resp, resp + n_samples));
@@ -85,16 +51,6 @@ void SVM::Train(const BaseData &data, const long* resp,
         int classNumber = int(resp[i]);
         classIdxVectors[classNumber].push_back(i);
     }
-
-
-//    for(int i = 0;i < n_samples;i++)
-//    {
-//        for(int j = 0;j < n_vars;j++)
-//        {
-//            std::cout << d(i, j) << " ";
-//        }
-//        std::cout << std::endl;
-//    }
 
 
     betta.clear();
@@ -115,8 +71,6 @@ void SVM::Train(const BaseData &data, const long* resp,
 
 
 
-//double SVM::Predict(const std::list<Pair>& sample) const
-
 void SVM::Predict(const BaseData &data, long *pred) const
 {
     assert(!betta.empty());
@@ -131,12 +85,6 @@ void SVM::Predict(const BaseData &data, long *pred) const
         {
             for(int j = i+1;j<n_classes;j++)
             {
-//                double result = 0;
-//                for(int s = 0;s<n_vars;s++)
-//                {
-//                    result += samples(sample_idx, s)*betta[k][s];
-//                }
-
                 double result = data.multiply_row_by_Vec(sample_idx, betta[k]);
 
 
@@ -167,67 +115,11 @@ void SVM::Predict(const BaseData &data, long *pred) const
 }
 
 
-//double SVM::CalcError(const Data& data, int type) const
-//{
-//    const vector<int>& trainSampleIdx = data.TrainSampleIdx();
-//    const vector<int>& testSampleIdx = data.TestSampleIdx();
-//    const vector<int>* sampleIdxPtr;
-//    if(type==TRAIN)
-//    {
-//        sampleIdxPtr = &trainSampleIdx;
-//    }
-//    else // type==TEST
-//    {
-//        sampleIdxPtr = &testSampleIdx;
-//    }
-//    const vector<int>& sampleIdx = *sampleIdxPtr;
-
-
-//    assert( sampleIdx.size() != 0 );
-
-
-//    int errorCount = 0;
-//    for(unsigned i = 0;i<sampleIdx.size();i++)
-//    {
-//        int row = sampleIdx[i];
-
-//        double pred = this->Predict(data.Samples()[row]);
-//        double actual = data.Responses()[row];
-
-//        #ifdef BMRM_INFO
-//        cout << "row = " << row;
-//        cout << " actual = " << actual << " pred = " << pred << endl;
-//        #endif
-
-//        if(pred != actual)
-//        {
-//            errorCount++;
-//        }
-
-
-//    }
-//    return double(errorCount)/sampleIdx.size();
-//}
-
-
 ////------------------------------------------------------------------------------------------
 
 double Omega(const Vec& w)
 {
     return double(0.5)*inner_prod(w, w);
-}
-
-
-double SparseProduct(int rowIdx, const Data& samples, const Vec& vec)
-{
-    double result = 0.;
-
-    for(int i = 0;i<vec.size();i++)
-    {
-        result += samples(rowIdx, i)*vec(i);
-    }
-
-    return result;
 }
 
 
@@ -363,13 +255,11 @@ static double empRiskBinary(const BaseData& data,
     for(unsigned i = 0;i<firstClassIdx.size();i++)
     {
         int idx = firstClassIdx[i];
-//        sum += max(  double(0), 1 - SparseProduct(idx, samples, w)  );
         sum += max(  double(0), 1 - data.multiply_row_by_Vec(idx, w)  );
     }
     for(unsigned i = 0;i<secondClassIdx.size();i++)
     {
         int idx = secondClassIdx[i];
-//        sum += max(  double(0), 1 + SparseProduct(idx, samples, w)  );
         sum += max(  double(0), 1 + data.multiply_row_by_Vec(idx, w)  );
     }
 
@@ -407,14 +297,9 @@ Vec empRiskSubgradientOneClass(const BaseData &data,
     for(unsigned i = 0;i<classSampleIdx.size();i++)
     {
         int idx = classSampleIdx[i];
-//        double maxVal = max(  double(0), 1-y*SparseProduct(idx, data, w)  );
         double maxVal = max(  double(0), 1-y*data.multiply_row_by_Vec(idx, w) );
         if(maxVal > 0)
         {
-//            for(int i = 0;i<subgr.size();i++)
-//            {
-//                subgr(i) += -y*data(idx, i);
-//            }
             data.add_row_multiplyed_by_value(subgr, idx, -y);
         }
     }

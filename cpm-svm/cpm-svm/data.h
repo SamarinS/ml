@@ -3,22 +3,6 @@
 
 #include "linear_algebra.h"
 
-class Data
-{
-public:
-    Data(const double* ptr, int row_step, int col_step)
-        : ptr(ptr), row_step(row_step), col_step(col_step) {}
-    double operator() (int i, int j) const
-    {
-        return *(double*)((char*)ptr + i*row_step + j*col_step);
-    }
-
-private:
-    const double* ptr;
-    int row_step;
-    int col_step;
-};
-
 
 class BaseData
 {
