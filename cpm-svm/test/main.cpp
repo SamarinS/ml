@@ -3,55 +3,42 @@
 
 using namespace std;
 
-//class Data
-//{
-//public:
-//    Data(const double* ptr, int row_step, int col_step)
-//        : ptr(ptr), row_step(row_step), col_step(col_step)
-//    {
-//        for(int i = 0;i<6;i++)
-//        {
-//            cout << ptr[i] << endl;
-//        }
-//    }
-//    double operator() (int i, int j) const
-//    {
-//        return *((char*)ptr + i*row_step + j*col_step);
-//    }
+struct Samples
+{
+    BaseData* data;
+    long* resp;
 
-//private:
-//    const double* ptr;
-//    int row_step;
-//    int col_step;
-//};
+    Samples()
+    {
+        const int n_samples = 4;
+        const int n_vars = 2;
+        static double data[n_samples*n_vars] = {1., 0.,
+                        0., -1.,
+                        -1., 0.,
+                        0., 1.};
+
+        int row_step = 2*sizeof(double);
+        int col_step = sizeof(double);
+
+        this->data = new DenseData(data, n_samples, n_vars, row_step, col_step);
+        static long resp_array[] = {0, 0, 1, 1};
+        this->resp = resp_array;
+    }
+};
 
 
 int main()
 {
-    cout << "Hello World!" << endl;
+    cout << "Testing..." << endl;
 
-
+    Samples samples;
 
     SVM clf;
+    clf.Train(*samples.data, samples.resp, 1., 0., 0.01, 100);
 
-    const int n_samples = 4;
-    const int n_vars = 2;
-    double data[n_samples*n_vars] = {1., 0.,
-                    0., -1.,
-                    -1., 0.,
-                    0., 1.};
-
-    long resp[n_samples] = {0, 0, 1, 1};
-
-    int row_step = 2*sizeof(double);
-    int col_step = sizeof(double);
-
-    BaseData* denseData = new DenseData(data, n_samples, n_vars, row_step, col_step);
-
-    clf.Train(*denseData, resp, 1., 0., 0.01, 100);
-
+    const int n_samples = samples.data->rows();
     long pred[n_samples];
-    clf.Predict(*denseData, pred);
+    clf.Predict(*samples.data, pred);
 
 //    cout << sizeof(long) << endl;
 
