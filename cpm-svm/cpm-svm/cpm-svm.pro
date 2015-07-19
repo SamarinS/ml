@@ -16,9 +16,9 @@ HEADERS += \
     linear_algebra.h \
     data.h
 
-CONFIG(debug, debug|release) {
-    DEFINES += "BMRM_INFO"
-}
+#CONFIG(debug, debug|release) {
+#    DEFINES += "BMRM_INFO"
+#}
 
 CONFIG(release, debug|release) {
     DEFINES += "NDEBUG"

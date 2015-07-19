@@ -23,6 +23,8 @@ private:
 
     std::vector<Vec> betta;
     int n_classes;
+
+    friend class Test;
 };
 
 

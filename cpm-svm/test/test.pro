@@ -5,5 +5,9 @@ CONFIG -= qt
 
 LIBS += -L"../build-cpm-svm-Desktop-Debug" -lcpm-svm
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    test.cpp
+
+HEADERS += \
+    test.h
 

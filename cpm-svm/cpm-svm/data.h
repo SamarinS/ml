@@ -3,6 +3,10 @@
 
 #include "linear_algebra.h"
 
+/// Question
+/// Calculating data density
+/// Empty line??? (multiply_row_by_Vec && add_row_multiplyed_by_value)
+
 
 class BaseData
 {
@@ -25,8 +29,7 @@ protected:
 class DenseData : public BaseData
 {
 public:
-    DenseData(const double* ptr, int rows_number, int cols_number, int row_step, int col_step)
-        : BaseData(ptr, rows_number, cols_number), row_step(row_step), col_step(col_step) {}
+    DenseData(const double* ptr, int rows_number, int cols_number, int row_step, int col_step);
     double multiply_row_by_Vec(int row, const Vec& vec) const;
     void add_row_multiplyed_by_value(Vec& vec, int row, double value) const;
 private:
@@ -37,6 +40,32 @@ private:
     {
         return *(double*)((char*)ptr + i*row_step + j*col_step);
     }
+};
+
+
+class SparseData : public BaseData
+{
+public:
+    SparseData(const double* ptr, int rows_number, int cols_number,
+               const int* indices, int indices_len,
+               const int* indptr, int indptr_len);
+    double multiply_row_by_Vec(int row, const Vec& vec) const;
+    void add_row_multiplyed_by_value(Vec& vec, int row, double value) const;
+private:
+    const int* indices;
+    int indices_len;
+
+    const int* indptr;
+    int indptr_len;
+
+    mutable int current_index;
+    mutable int current_row;
+
+
+    void set_row(int i) const;
+    bool next_element() const;
+    int element_idx() const;
+    double element_value() const;
 };
 
 
