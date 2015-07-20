@@ -22,4 +22,6 @@ class CPM_SVM(BaseEstimator, ClassifierMixin):
         X = check_array(X)
         y = self.svm.predict(X)
         return self.classes_.take(np.asarray(y, dtype=np.intp))
-        
+
+def fun():
+    cython_svm.fun()
