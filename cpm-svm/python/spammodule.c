@@ -63,8 +63,8 @@ static PyObject* spam_predict(PyObject* self, PyObject* args)
     );
 
     int n_dimensions = 1;
-    int dimensions[n_dimensions] = {X->dimensions[0]};
-    PyArrayObject* obj = (PyArrayObject*)PyArray_FromDims(
+    npy_intp dimensions[n_dimensions] = {X->dimensions[0]};
+    PyArrayObject* obj = (PyArrayObject*)PyArray_SimpleNew(
         n_dimensions, dimensions, PyArray_LONG);
 
     svm.Predict(*(DenseData*)data, (long*)obj->data);
