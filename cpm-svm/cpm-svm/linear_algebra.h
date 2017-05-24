@@ -12,11 +12,11 @@
 
 
 //typedef double Real;
-typedef boost::numeric::ublas::matrix<double> Mat;
-typedef boost::numeric::ublas::vector<double> Vec;
+using Mat = boost::numeric::ublas::matrix<double>;
+using Vec = boost::numeric::ublas::vector<double>;
 
-typedef boost::numeric::ublas::zero_matrix<double> ZeroMat;
-typedef boost::numeric::ublas::zero_vector<double> ZeroVector;
+using ZeroMat = boost::numeric::ublas::zero_matrix<double>;
+using ZeroVector = boost::numeric::ublas::zero_vector<double>;
 
 
 //struct Pair

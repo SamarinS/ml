@@ -75,11 +75,10 @@ void SVM::Predict(const BaseData &data, long *pred) const
 {
     assert(!betta.empty());
 
-
     for(int sample_idx = 0;sample_idx<data.rows();sample_idx++)
     {
-        vector<int> classVote(n_classes);
-        std::fill(classVote.begin(), classVote.end(), 0);
+        vector<int> classVote(n_classes, 0);
+
         int k = 0;
         for(int i = 0;i<n_classes;i++)
         {
@@ -100,17 +99,8 @@ void SVM::Predict(const BaseData &data, long *pred) const
             }
         }
 
-        int max_val = 0;
-        int max_idx;
-        for(unsigned i = 0;i<classVote.size();i++)
-        {
-            if(classVote[i] > max_val)
-            {
-                max_idx = i;
-                max_val = classVote[i];
-            }
-        }
-        pred[sample_idx] = long(max_idx);
+        auto iter = std::max_element(classVote.begin(), classVote.end());
+        pred[sample_idx] = std::distance(classVote.begin(), iter);
     }
 }
 
@@ -126,7 +116,7 @@ double Omega(const Vec& w)
 double empRiskCP(const vector<Vec>& a, const vector<double>& b, const Vec& w)
 {
     double val = inner_prod(w, a[0]) + b[0];
-    for(unsigned i = 1;i<a.size();i++)
+    for(std::vector<Vec>::size_type i = 1;i<a.size();i++)
     {
         val = std::max (val, inner_prod(w, a[i]) + b[i]);
     }
@@ -252,12 +242,12 @@ static double empRiskBinary(const BaseData& data,
                     const Vec& w)
 {
     double sum = 0;
-    for(unsigned i = 0;i<firstClassIdx.size();i++)
+    for(std::vector<int>::size_type i = 0;i<firstClassIdx.size();i++)
     {
         int idx = firstClassIdx[i];
         sum += max(  double(0), 1 - data.multiply_row_by_Vec(idx, w)  );
     }
-    for(unsigned i = 0;i<secondClassIdx.size();i++)
+    for(std::vector<int>::size_type i = 0;i<secondClassIdx.size();i++)
     {
         int idx = secondClassIdx[i];
         sum += max(  double(0), 1 + data.multiply_row_by_Vec(idx, w)  );
@@ -294,7 +284,7 @@ Vec empRiskSubgradientOneClass(const BaseData &data,
     subgr.resize(w.size());
     std::fill(subgr.begin(), subgr.end(), 0);
 
-    for(unsigned i = 0;i<classSampleIdx.size();i++)
+    for(std::vector<int>::size_type i = 0;i<classSampleIdx.size();i++)
     {
         int idx = classSampleIdx[i];
         double maxVal = max(  double(0), 1-y*data.multiply_row_by_Vec(idx, w) );
