@@ -5,12 +5,7 @@
 /// Is it necessary to check if input data is not empty
 /// in methods SVM.Train and SVM.Predict?
 
-
-#include "linear_algebra.h"
-#include "data.h"
-
-
-
+#include "base.h"
 
 class SVM
 {
@@ -19,12 +14,11 @@ public:
                double lambda, double epsilon_abs, double epsilon_tol, int tMax);
     void Predict(const BaseData& data, long* pred) const;
 
+    int n_classes() const;
+    const std::vector<Vec>& betta() const;
+
 private:
-
-    std::vector<Vec> betta;
-    int n_classes;
-
-    friend class Test;
+    SvmData svmData;
 };
 
 

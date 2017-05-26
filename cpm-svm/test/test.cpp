@@ -23,7 +23,7 @@ bool Test::test_svm_w_after_training_on_simple_data(const BaseData &data)
     SVM clf;
     clf.Train(data, resp, 1., 0., 0.01, 100);
 
-    Vec& w = clf.betta[0];
+    const Vec& w = clf.betta()[0];
     return (w.size()==2 && w[0]==0.5 && w[1]==-0.5);
 }
 
