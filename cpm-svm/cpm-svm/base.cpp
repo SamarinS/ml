@@ -8,10 +8,7 @@
 #include "solve_qp.h"
 
 
-using namespace std;
-
-
-static double empRiskCP(const vector<Vec>& a, const vector<double>& b, const Vec& w);
+static double empRiskCP(const std::vector<Vec>& a, const std::vector<double>& b, const Vec& w);
 static double Omega(const Vec& w);
 
 
@@ -46,7 +43,7 @@ void trainSvm(const BaseData &data, const long *resp, const SvmParams &params, S
 
     n_classes = int(1 + *std::max_element(resp, resp + n_samples));
 
-    vector<vector<int> > classIdxVectors(n_classes);
+    std::vector<std::vector<int> > classIdxVectors(n_classes);
     for(int i = 0;i<n_samples;i++)
     {
         int classNumber = int(resp[i]);
@@ -60,7 +57,7 @@ void trainSvm(const BaseData &data, const long *resp, const SvmParams &params, S
         for(int j = i+1;j<n_classes;j++)
         {
             #ifdef BMRM_INFO
-            cout << "class " << i << " vs " << j << endl;
+            std::cout << "class " << i << " vs " << j << std::endl;
             #endif
             Vec w = TrainBinarySVM(data,
                                    classIdxVectors[i], classIdxVectors[j],
@@ -79,7 +76,7 @@ void predict(const BaseData &data, long *pred, const SvmData &svmData)
 
     for(int sample_idx = 0;sample_idx<data.rows();sample_idx++)
     {
-        vector<int> classVote(n_classes, 0);
+        std::vector<int> classVote(n_classes, 0);
 
         int k = 0;
         for(int i = 0;i<n_classes;i++)
@@ -114,7 +111,7 @@ double Omega(const Vec& w)
 }
 
 
-double empRiskCP(const vector<Vec>& a, const vector<double>& b, const Vec& w)
+double empRiskCP(const std::vector<Vec>& a, const std::vector<double>& b, const Vec& w)
 {
     double val = inner_prod(w, a[0]) + b[0];
     for(std::vector<Vec>::size_type i = 1;i<a.size();i++)
@@ -143,9 +140,9 @@ static Vec TrainBinarySVM(const BaseData& data,
     std::fill(w.begin(), w.end(), 0);
     int t = 0;
     double currentEps = -1;
-    vector<Vec> a;
-    vector<double> b;
-    vector<double> gram_memory;
+    std::vector<Vec> a;
+    std::vector<double> b;
+    std::vector<double> gram_memory;
 
 
     do
@@ -164,12 +161,12 @@ static Vec TrainBinarySVM(const BaseData& data,
         time_b += gettimeus();
 
 #ifdef BMRM_INFO
-        cout << endl << "Iteration " << t << endl;
+        std::cout << std::endl << "Iteration " << t << std::endl;
 //        cout << "empRisk(w) = " << empRisk(data, w) << endl;
 
 
-        cout << "Subgradient calculating time: " << double(time_a)/1000000 << " seconds" << endl;
-        cout << "Coef calculating time: " << double(time_b)/1000000 << " seconds" << endl;
+        std::cout << "Subgradient calculating time: " << double(time_a)/1000000 << " seconds" << std::endl;
+        std::cout << "Coef calculating time: " << double(time_b)/1000000 << " seconds" << std::endl;
 
 //        cout << "w[" << t-1 << "] = " << w << endl;
 //        cout << "a[" << t << "] = " << a.back() << endl;
@@ -200,7 +197,7 @@ static Vec TrainBinarySVM(const BaseData& data,
         w = -temp/lambda;
 
 #ifdef BMRM_INFO
-        cout << "J(w) = " << lambda*Omega(w)+empRiskBinary(data, firstClassIdx, secondClassIdx, w) << endl;
+        std::cout << "J(w) = " << lambda*Omega(w)+empRiskBinary(data, firstClassIdx, secondClassIdx, w) << std::endl;
 //        cout << "EmpRisk(w) = " << empRisk(data, w) << endl;
 //        cout << "EmpRiskCP(w) = " << empRiskCP(a, b, w) << endl;
 #endif
@@ -212,9 +209,9 @@ static Vec TrainBinarySVM(const BaseData& data,
         currentEps = empRiskBinary(data, firstClassIdx, secondClassIdx, w) - empRiskCP(a, b, w);
 
 #ifdef BMRM_INFO
-        cout << "QP solving time: " << double(time_qp)/1000000 << " seconds" << endl;
+        std::cout << "QP solving time: " << double(time_qp)/1000000 << " seconds" << std::endl;
 
-        cout << "Current epsilon = " << currentEps << endl;
+        std::cout << "Current epsilon = " << currentEps << std::endl;
 #endif
 
     }
@@ -226,14 +223,14 @@ static Vec TrainBinarySVM(const BaseData& data,
 
 
 #ifdef BMRM_INFO
-    cout << endl << endl;
-    cout << "BMRM => J(w) = " << lambda*Omega(w)+empRiskBinary(data, firstClassIdx, secondClassIdx, w) << endl;
+    std::cout << std::endl << std::endl;
+    std::cout << "BMRM => J(w) = " << lambda*Omega(w)+empRiskBinary(data, firstClassIdx, secondClassIdx, w) << std::endl;
     printf("BMRM => Achieved epsilon: %e \n", currentEps);
     printf("BMRM => Required abs epsilon: %e \n", epsilon_abs);
     printf("BMRM => Required tol epsilon: %e \n", epsilon_tol);
-    cout << "BMRM => Number of iterations: " << t << " (max - " << tMax << ")" << endl;
+    std::cout << "BMRM => Number of iterations: " << t << " (max - " << tMax << ")" << std::endl;
 
-    cout << "w = " << w << endl;
+    std::cout << "w = " << w << std::endl;
 #endif
 
 
@@ -250,12 +247,12 @@ static double empRiskBinary(const BaseData& data,
     for(std::vector<int>::size_type i = 0;i<firstClassIdx.size();i++)
     {
         int idx = firstClassIdx[i];
-        sum += max(  double(0), 1 - data.multiply_row_by_Vec(idx, w)  );
+        sum += std::max(  double(0), 1 - data.multiply_row_by_Vec(idx, w)  );
     }
     for(std::vector<int>::size_type i = 0;i<secondClassIdx.size();i++)
     {
         int idx = secondClassIdx[i];
-        sum += max(  double(0), 1 + data.multiply_row_by_Vec(idx, w)  );
+        sum += std::max(  double(0), 1 + data.multiply_row_by_Vec(idx, w)  );
     }
 
     sum /= firstClassIdx.size() + secondClassIdx.size();
@@ -292,7 +289,7 @@ Vec empRiskSubgradientOneClass(const BaseData &data,
     for(std::vector<int>::size_type i = 0;i<classSampleIdx.size();i++)
     {
         int idx = classSampleIdx[i];
-        double maxVal = max(  double(0), 1-y*data.multiply_row_by_Vec(idx, w) );
+        double maxVal = std::max(  double(0), 1-y*data.multiply_row_by_Vec(idx, w) );
         if(maxVal > 0)
         {
             data.add_row_multiplyed_by_value(subgr, idx, -y);

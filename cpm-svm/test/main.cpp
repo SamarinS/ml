@@ -2,10 +2,9 @@
 
 #include "test.h"
 
-using namespace std;
 
-
-#define my_test(name) cout << boolalpha << check_flag(name()) << " - " << #name << endl
+#define my_test(name) std::cout << std::boolalpha << check_flag(name()) << \
+                      " - " << #name << std::endl
 
 bool tests_passed = true;
 
@@ -21,7 +20,7 @@ bool check_flag(bool flag)
 
 int main()
 {
-    cout << "Testing started ..." << endl;
+    std::cout << "Testing started ..." << std::endl;
 
     my_test(Test::DenseData_multiply_row_by_Vec);
     my_test(Test::DenseData_add_row_multiplyed_by_value);
@@ -33,11 +32,11 @@ int main()
 
     if(!tests_passed)
     {
-        cout << "Some tests has failed" << endl;
+        std::cout << "Some tests has failed" << std::endl;
     }
     else
     {
-        cout << "All tests passed" << endl;
+        std::cout << "All tests passed" << std::endl;
     }
 //    const int n_vars = samples.data->cols();
 

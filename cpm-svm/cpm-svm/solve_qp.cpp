@@ -4,8 +4,6 @@
 #ifdef BMRM_INFO
 #include "timer.h"
 #include <iostream>
-
-using namespace std;
 #endif //BMRM_INFO
 
 
@@ -136,8 +134,8 @@ void SolveQP(std::vector<double> &gram_memory, std::vector<Vec>& a, std::vector<
     /// ==========================
 #ifdef BMRM_INFO
     time_while += gettimeus();
-    cout << "QP Hnn_calc time: " << double(time_Hnn_calc)/1000000 << " seconds" << endl;
-    cout << "QP cycle time: " << double(time_while)/1000000 << " seconds" << endl;
+    std::cout << "QP Hnn_calc time: " << double(time_Hnn_calc)/1000000 << " seconds" << std::endl;
+    std::cout << "QP cycle time: " << double(time_while)/1000000 << " seconds" << std::endl;
     std::cout << "QP iter number: " << iter_count << std::endl;
 #endif //BMRM_INFO
 }
