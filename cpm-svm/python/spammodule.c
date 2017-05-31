@@ -4,11 +4,43 @@
 #include <iostream>
 #include <cstdint>
 
-#include "../cpm-svm/svm.h"
-
-SVM svm;
+#include "../cpm-svm/base.h"
 
 static PyObject *SpamError;
+
+static void setBetta(SvmData* svmData, const PyArrayObject* betta)
+{
+    for (npy_intp i = 0; i < betta->dimensions[0]; i++)
+    {
+        Vec vec(betta->dimensions[1]);
+        for (Vec::size_type j = 0; j < vec.size(); j++)
+        {
+            vec[j] = *(double*)(betta->data + i*betta->strides[0] + j*betta->strides[1]);
+        }
+        svmData->betta.push_back(vec);
+    }
+}
+
+static PyArrayObject* getBetta(const SvmData& svmData)
+{
+    int n_dimensions = 2;
+    npy_intp dim1 = svmData.betta.size();
+    npy_intp dim2 = svmData.betta[0].size();
+    npy_intp dimensions[n_dimensions] = {dim1, dim2};
+    PyArrayObject* obj = (PyArrayObject*)PyArray_SimpleNew(
+        n_dimensions, dimensions, PyArray_DOUBLE);
+
+    for (std::vector<Vec>::size_type i = 0;i<svmData.betta.size();i++)
+    {
+        auto vec_size = svmData.betta[i].size();
+        for (Vec::size_type j = 0;j<vec_size;j++)
+        {
+            ((double*)obj->data)[i*vec_size+j] = svmData.betta[i][j];
+        }
+    }
+
+    return obj;
+}
 
 static PyObject* spam_fit(PyObject* self, PyObject* args)
 {
@@ -38,18 +70,24 @@ static PyObject* spam_fit(PyObject* self, PyObject* args)
         X->strides[1]
     );
 
-    svm.Train(*(DenseData*)data, (const long*)y->data,
-              lambda, epsilon_abs, epsilon_tol, tMax);
+    SvmParams params(lambda, epsilon_abs, epsilon_tol, tMax);
+    SvmData svmData;
+    trainSvm(*(DenseData*)data, (const long*)y->data, params, &svmData);
 
-    return Py_None;
+    auto betta = getBetta(svmData);
+    return Py_BuildValue("(iO)", svmData.n_classes, PyArray_Return(betta));
 }
 
 static PyObject* spam_predict(PyObject* self, PyObject* args)
 {
     PyArrayObject* X;
+    PyArrayObject* betta;
+    int n_classes;
 
-    if (!PyArg_ParseTuple(args, "O!", 
-                          &PyArray_Type, &X))
+    if (!PyArg_ParseTuple(args, "O!O!i", 
+                          &PyArray_Type, &X,
+                          &PyArray_Type, &betta,
+                          &n_classes))
     {
         return NULL;
     }
@@ -67,7 +105,11 @@ static PyObject* spam_predict(PyObject* self, PyObject* args)
     PyArrayObject* obj = (PyArrayObject*)PyArray_SimpleNew(
         n_dimensions, dimensions, PyArray_LONG);
 
-    svm.Predict(*(DenseData*)data, (long*)obj->data);
+    SvmData svmData;
+    setBetta(&svmData, betta);
+    svmData.n_classes = n_classes;
+
+    predict(*(DenseData*)data, (long*)obj->data, svmData);
 
     return PyArray_Return(obj);
 }

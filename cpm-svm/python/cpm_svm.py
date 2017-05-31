@@ -22,15 +22,18 @@ class CPM_SVM(BaseEstimator, ClassifierMixin):
                 "The number of classes has to be greater than one; got %d"
                 % len(self.classes_))
 
-        spam.fit(X, y,
-                 self.lambda_coef, self.epsilon_abs, self.epsilon_tol,
-                 self.max_iter)
+        self.n_classes, self.betta = spam.fit(X, y,
+            self.lambda_coef,
+            self.epsilon_abs,
+            self.epsilon_tol,
+            self.max_iter)
+
         return self
     
     def predict(self, X):
         X = check_array(X)
         X = np.asarray(X, dtype=np.float64, order='C')
 
-        y = spam.predict(X)
+        y = spam.predict(X, self.betta, self.n_classes)
 
         return self.classes_.take(np.asarray(y, dtype=np.intp))
