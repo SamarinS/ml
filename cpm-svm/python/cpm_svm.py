@@ -15,6 +15,11 @@ class CPM_SVM(BaseEstimator, ClassifierMixin):
         X, y = check_X_y(X, y)
         X = np.asarray(X, dtype=np.float64, order='C')
 
+        if issubclass(y.dtype.type, np.floating) == True:
+            for label in y:
+                if label.is_integer() == False:
+                    raise ValueError("Unknown label type: labels shouldn't be floating point numbers with non-zero fractional part")
+
         self.classes_, y = np.unique(y, return_inverse=True)
 
         if len(self.classes_) < 2:
@@ -31,8 +36,16 @@ class CPM_SVM(BaseEstimator, ClassifierMixin):
         return self
     
     def predict(self, X):
+        if hasattr(self, 'betta') == False:
+            raise ValueError("The classifier is not fitted yet. Please call 'fit' with appropriate arguments before using this method.")
+
         X = check_array(X)
         X = np.asarray(X, dtype=np.float64, order='C')
+
+        if X.shape[1] != self.betta.shape[1]:
+            raise ValueError(
+                "The number of X columns has to be equal to the number of features (%d); got %d"
+                % (self.betta.shape[1], X.shape[1]))
 
         y = spam.predict(X, self.betta, self.n_classes)
 
