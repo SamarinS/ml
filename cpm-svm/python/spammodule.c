@@ -75,7 +75,7 @@ static PyObject* spam_fit(PyObject* self, PyObject* args)
     trainSvm(*(DenseData*)data, (const long*)y->data, params, &svmData);
 
     auto betta = getBetta(svmData);
-    return Py_BuildValue("(iO)", svmData.n_classes, PyArray_Return(betta));
+    return PyArray_Return(betta);
 }
 
 static PyObject* spam_predict(PyObject* self, PyObject* args)

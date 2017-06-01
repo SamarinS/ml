@@ -27,7 +27,7 @@ class CPM_SVM(BaseEstimator, ClassifierMixin):
                 "The number of classes has to be greater than one; got %d"
                 % len(self.classes_))
 
-        self.n_classes, self.betta = spam.fit(X, y,
+        self.betta_ = spam.fit(X, y,
             self.lambda_coef,
             self.epsilon_abs,
             self.epsilon_tol,
@@ -36,17 +36,17 @@ class CPM_SVM(BaseEstimator, ClassifierMixin):
         return self
     
     def predict(self, X):
-        if hasattr(self, 'betta') == False:
+        if hasattr(self, 'betta_') == False:
             raise ValueError("The classifier is not fitted yet. Please call 'fit' with appropriate arguments before using this method.")
 
         X = check_array(X)
         X = np.asarray(X, dtype=np.float64, order='C')
 
-        if X.shape[1] != self.betta.shape[1]:
+        if X.shape[1] != self.betta_.shape[1]:
             raise ValueError(
                 "The number of X columns has to be equal to the number of features (%d); got %d"
-                % (self.betta.shape[1], X.shape[1]))
+                % (self.betta_.shape[1], X.shape[1]))
 
-        y = spam.predict(X, self.betta, self.n_classes)
+        y = spam.predict(X, self.betta_, len(self.classes_))
 
         return self.classes_.take(np.asarray(y, dtype=np.intp))
