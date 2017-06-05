@@ -1,1 +1,0 @@
-../python/cpm_svm.py
