@@ -6,7 +6,7 @@
 
 #include "../svm/base.h"
 
-static PyObject *SpamError;
+static PyObject *SvmModuleError;
 
 static void setBetta(SvmData* svmData, const PyArrayObject* betta)
 {
@@ -42,7 +42,7 @@ static PyArrayObject* getBetta(const SvmData& svmData)
     return obj;
 }
 
-static PyObject* spam_fit(PyObject* self, PyObject* args)
+static PyObject* svmmodule_fit(PyObject* self, PyObject* args)
 {
     PyArrayObject* X;
     PyArrayObject* y;
@@ -78,7 +78,7 @@ static PyObject* spam_fit(PyObject* self, PyObject* args)
     return PyArray_Return(betta);
 }
 
-static PyObject* spam_fit_sparse(PyObject* self, PyObject* args)
+static PyObject* svmmodule_fit_sparse(PyObject* self, PyObject* args)
 {
     int rows_number;
     int cols_number;
@@ -124,7 +124,7 @@ static PyObject* spam_fit_sparse(PyObject* self, PyObject* args)
     return PyArray_Return(betta);
 }
 
-static PyObject* spam_predict(PyObject* self, PyObject* args)
+static PyObject* svmmodule_predict(PyObject* self, PyObject* args)
 {
     PyArrayObject* X;
     PyArrayObject* betta;
@@ -160,7 +160,7 @@ static PyObject* spam_predict(PyObject* self, PyObject* args)
     return PyArray_Return(obj);
 }
 
-static PyObject* spam_predict_sparse(PyObject* self, PyObject* args)
+static PyObject* svmmodule_predict_sparse(PyObject* self, PyObject* args)
 {
     int rows_number;
     int cols_number;
@@ -206,26 +206,26 @@ static PyObject* spam_predict_sparse(PyObject* self, PyObject* args)
     return PyArray_Return(obj);
 }
 
-static PyMethodDef SpamMethods[] = {
-    {"fit", spam_fit, METH_VARARGS, "cpm-svm classifier: fit"},
-    {"fit_sparse", spam_fit_sparse, METH_VARARGS, "cpm-svm classifier: fit sparse"},
-    {"predict", spam_predict, METH_VARARGS, "cpm-svm classifier: predict"},
-    {"predict_sparse", spam_predict_sparse, METH_VARARGS, "cpm-svm classifier: predict sparse"},
+static PyMethodDef SvmModuleMethods[] = {
+    {"fit", svmmodule_fit, METH_VARARGS, "svm classifier: fit"},
+    {"fit_sparse", svmmodule_fit_sparse, METH_VARARGS, "svm classifier: fit sparse"},
+    {"predict", svmmodule_predict, METH_VARARGS, "svm classifier: predict"},
+    {"predict_sparse", svmmodule_predict_sparse, METH_VARARGS, "svm classifier: predict sparse"},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
 PyMODINIT_FUNC
-initspam(void)
+initsvmmodule(void)
 {
     PyObject *m;
 
-    m = Py_InitModule("spam", SpamMethods);
+    m = Py_InitModule("svmmodule", SvmModuleMethods);
     if (m == NULL)
         return;
 
     import_array();
 
-    SpamError = PyErr_NewException("spam.error", NULL, NULL);
-    Py_INCREF(SpamError);
-    PyModule_AddObject(m, "error", SpamError);
+    SvmModuleError = PyErr_NewException("svmmodule.error", NULL, NULL);
+    Py_INCREF(SvmModuleError);
+    PyModule_AddObject(m, "error", SvmModuleError);
 }

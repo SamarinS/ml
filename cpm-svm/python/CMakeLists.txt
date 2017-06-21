@@ -1,15 +1,15 @@
 cmake_minimum_required(VERSION 3.1)
-project(spam)
+project(python_svm_module)
 
-set(SOURCE spammodule.cpp)
+set(SOURCE svmmodule.cpp)
 
-add_library(spam SHARED ${SOURCE})
-set_target_properties(spam PROPERTIES PREFIX "")
+add_library(svmmodule SHARED ${SOURCE})
+set_target_properties(svmmodule PROPERTIES PREFIX "")
 
 find_package(PythonLibs 2.7 REQUIRED)
 if (PYTHONLIBS_FOUND)
     include_directories(${PYTHON_INCLUDE_DIRS})
-    target_link_libraries(spam ${PYTHON_LIBRARIES})
+    target_link_libraries(svmmodule ${PYTHON_LIBRARIES})
 endif(PYTHONLIBS_FOUND)
 
-target_link_libraries(spam svm)
+target_link_libraries(svmmodule svm)

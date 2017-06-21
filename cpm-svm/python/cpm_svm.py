@@ -2,7 +2,7 @@ from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.utils import check_X_y, check_array
 import numpy as np
 import scipy.sparse as sp
-import spam
+import svmmodule
 
 def check_that_sparse_X_is_float64(X):
     if X.dtype != np.float64:
@@ -38,14 +38,14 @@ class CPM_SVM(BaseEstimator, ClassifierMixin):
                 % len(self.classes_))
 
         if sp.isspmatrix(X):
-            self.betta_ = spam.fit_sparse(X.shape[0], X.shape[1], X.data,
+            self.betta_ = svmmodule.fit_sparse(X.shape[0], X.shape[1], X.data,
                 X.indices, X.indptr, y,
                 self.lambda_coef,
                 self.epsilon_abs,
                 self.epsilon_tol,
                 self.max_iter)
         else:
-            self.betta_ = spam.fit(X, y,
+            self.betta_ = svmmodule.fit(X, y,
                 self.lambda_coef,
                 self.epsilon_abs,
                 self.epsilon_tol,
@@ -70,7 +70,7 @@ class CPM_SVM(BaseEstimator, ClassifierMixin):
 
             self.check_columns(X.shape[1])
 
-            y = spam.predict_sparse(X.shape[0], X.shape[1], X.data,
+            y = svmmodule.predict_sparse(X.shape[0], X.shape[1], X.data,
                 X.indices, X.indptr, self.betta_, len(self.classes_))
         else:
             X = check_array(X)
@@ -78,6 +78,6 @@ class CPM_SVM(BaseEstimator, ClassifierMixin):
 
             self.check_columns(X.shape[1])
 
-            y = spam.predict(X, self.betta_, len(self.classes_))
+            y = svmmodule.predict(X, self.betta_, len(self.classes_))
 
         return self.classes_.take(np.asarray(y, dtype=np.intp))
