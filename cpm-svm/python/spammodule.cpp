@@ -4,7 +4,7 @@
 #include <iostream>
 #include <cstdint>
 
-#include "../cpm-svm/base.h"
+#include "../svm/base.h"
 
 static PyObject *SpamError;
 

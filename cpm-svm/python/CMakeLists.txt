@@ -12,4 +12,4 @@ if (PYTHONLIBS_FOUND)
     target_link_libraries(spam ${PYTHON_LIBRARIES})
 endif(PYTHONLIBS_FOUND)
 
-target_link_libraries(spam cpm_svm)
+target_link_libraries(spam svm)

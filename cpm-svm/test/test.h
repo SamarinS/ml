@@ -1,7 +1,7 @@
 #ifndef TEST_H
 #define TEST_H
 
-#include "../cpm-svm/data.h"
+#include "../svm/data.h"
 
 
 

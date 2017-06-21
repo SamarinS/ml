@@ -1,5 +1,5 @@
 #include "test.h"
-#include "../cpm-svm/svm.h"
+#include "../svm/svm.h"
 
 #include <algorithm>
 
