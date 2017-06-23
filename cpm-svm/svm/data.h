@@ -1,6 +1,8 @@
 #ifndef DATA_H
 #define DATA_H
 
+#include <iostream>
+
 #include "linear_algebra.h"
 
 /// Question
@@ -19,12 +21,15 @@ public:
     int rows() const;
     int cols() const;
 
+    virtual void print(std::ostream& stream) const = 0;
+
 protected:
     const double* ptr;
     int rows_number;
     int cols_number;
 };
 
+std::ostream& operator << (std::ostream& stream, const BaseData& data);
 
 class DenseData : public BaseData
 {
@@ -32,6 +37,9 @@ public:
     DenseData(const double* ptr, int rows_number, int cols_number, int row_step, int col_step);
     double multiply_row_by_Vec(int row, const Vec& vec) const;
     void add_row_multiplyed_by_value(Vec& vec, int row, double value) const;
+    void print(std::ostream& stream) const;
+
+    static DenseData* LoadFromFile(std::string filename);
 private:
     int row_step;
     int col_step;
@@ -51,6 +59,9 @@ public:
                const int* indptr, int indptr_len);
     double multiply_row_by_Vec(int row, const Vec& vec) const;
     void add_row_multiplyed_by_value(Vec& vec, int row, double value) const;
+    void print(std::ostream& stream) const;
+
+    static SparseData* LoadFromFile(std::string filename);
 private:
     const int* indices;
     int indices_len;

@@ -1,5 +1,11 @@
 #include "data.h"
 
+// ToDo: определить методы:
+// SparseData::LoadFromFile
+// DenseData::LoadFromFile
+// SparseData::print
+// DenseData::print
+
 
 ///////////////////////
 /// class BaseData ////
@@ -15,7 +21,11 @@ int BaseData::rows() const
     return rows_number;
 }
 
-
+std::ostream& operator << (std::ostream& stream, const BaseData& data)
+{
+    data.print(stream);
+    return stream;
+}
 
 ///////////////////////
 /// class DenseData ///
@@ -49,6 +59,15 @@ void DenseData::add_row_multiplyed_by_value(Vec& vec, int row, double value) con
     }
 }
 
+void DenseData::print(std::ostream& stream) const
+{
+    stream << "print dense data\n";
+}
+
+DenseData* DenseData::LoadFromFile(std::string filename)
+{ 
+    return nullptr;
+}
 
 ////////////////////////
 /// class SparseData ///
@@ -140,4 +159,14 @@ double SparseData::element_value() const
 {
     assert( (indptr[current_row]<=current_index) && (current_index<indptr[current_row+1]) );
     return ptr[current_index];
+}
+
+void SparseData::print(std::ostream& stream) const
+{
+    stream << "print sparse data\n";
+}
+
+SparseData* SparseData::LoadFromFile(std::string filename)
+{ 
+    return nullptr;
 }
