@@ -1,5 +1,7 @@
 #include "test.h"
 #include "../svm/svm.h"
+#include "../svm/dense_data.h"
+#include "../svm/sparse_data.h"
 
 #include <algorithm>
 

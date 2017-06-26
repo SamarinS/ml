@@ -5,6 +5,8 @@
 #include <cstdint>
 
 #include "../svm/base.h"
+#include "../svm/dense_data.h"
+#include "../svm/sparse_data.h"
 
 static PyObject *SvmModuleError;
 
