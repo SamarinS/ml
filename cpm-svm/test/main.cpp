@@ -24,6 +24,7 @@ int main()
 
     my_test(Test::DenseData_multiply_row_by_Vec);
     my_test(Test::DenseData_add_row_multiplyed_by_value);
+    my_test(Test::DenseData_print);
     my_test(Test::test_svm_w_after_training_on_simple_dense_data);
 
     my_test(Test::SparseData_multiply_row_by_Vec);

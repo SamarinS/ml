@@ -4,7 +4,7 @@
 #include "../svm/sparse_data.h"
 
 #include <algorithm>
-
+#include <sstream>
 
 DenseData* get_simple_dense_data();
 SparseData* get_simple_sparse_data();
@@ -82,7 +82,16 @@ bool Test::DenseData_add_row_multiplyed_by_value()
     return BaseData_add_row_multiplyed_by_value(*data);
 }
 
+bool Test::DenseData_print()
+{
+    DenseData* data = get_simple_dense_data();
+    std::stringstream ss;
+    data->print(ss);
 
+    std::string expected = "[ 1  0]\n[ 0 -1]\n[-1  0]\n[ 0  1]\n";
+
+    return ss.str() == expected;
+}
 
 /// class SparseData
 

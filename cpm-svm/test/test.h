@@ -15,6 +15,7 @@ public:
     // BaseData, DenseData, SparseData
     static bool DenseData_multiply_row_by_Vec();
     static bool DenseData_add_row_multiplyed_by_value();
+    static bool DenseData_print();
 
     static bool SparseData_multiply_row_by_Vec();
     static bool SparseData_add_row_multiplyed_by_value();

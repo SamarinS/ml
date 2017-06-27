@@ -34,7 +34,25 @@ void DenseData::add_row_multiplyed_by_value(Vec& vec, int row, double value) con
 
 void DenseData::print(std::ostream& stream) const
 {
-    stream << "print dense data\n";
+    for (int i = 0; i < rows(); i++)
+    {
+        stream << "[";
+        for (int j = 0; j < cols(); j++)
+        {
+            auto value = at(i, j);
+
+            if (value >= 0)
+            {
+                stream << " ";
+            }
+            stream << value;
+            if (j != cols()-1)
+            {
+                stream << " ";
+            }
+        }
+        stream << "]\n";
+    }
 }
 
 DenseData* DenseData::LoadFromFile(std::string filename)
