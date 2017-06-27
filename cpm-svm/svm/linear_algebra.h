@@ -1,6 +1,4 @@
-#ifndef LINEAR_ALGEBRA_H
-#define LINEAR_ALGEBRA_H
-
+#pragma once
 
 #include <list>
 
@@ -29,5 +27,3 @@ using ZeroVector = boost::numeric::ublas::zero_vector<double>;
 
 //typedef std::vector< std::list<Pair> > SparseMat;
 
-
-#endif // LINEAR_ALGEBRA_H

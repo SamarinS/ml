@@ -1,5 +1,4 @@
-#ifndef DENSE_DATA_H
-#define DENSE_DATA_H
+#pragma once
 
 #include "data.h"
 
@@ -21,5 +20,3 @@ private:
         return *(double*)((char*)ptr + i*row_step + j*col_step);
     }
 };
-
-#endif // DENSE_DATA

@@ -1,5 +1,4 @@
-#ifndef TIMER_HR_H
-#define TIMER_HR_H
+#pragma once
 
 #ifdef _WIN32
 
@@ -32,6 +31,4 @@ inline long long gettimeus()
 }
 
 #endif // _WIN32
-
-#endif // TIMER_HR_H
 

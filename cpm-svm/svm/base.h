@@ -1,5 +1,4 @@
-#ifndef BASE_H
-#define BASE_H
+#pragma once
 
 #include "linear_algebra.h"
 #include "data.h"
@@ -27,5 +26,3 @@ struct SvmData
 void trainSvm(const BaseData& data, const long* resp, const SvmParams& params,
               SvmData* svmData);
 void predict(const BaseData& data, long* pred, const SvmData& svmData);
-
-#endif // BASE_H

@@ -1,5 +1,4 @@
-#ifndef DATA_H
-#define DATA_H
+#pragma once
 
 #include <iostream>
 
@@ -30,5 +29,3 @@ protected:
 };
 
 std::ostream& operator << (std::ostream& stream, const BaseData& data);
-
-#endif // DATA_H

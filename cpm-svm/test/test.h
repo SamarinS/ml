@@ -1,5 +1,4 @@
-#ifndef TEST_H
-#define TEST_H
+#pragma once
 
 #include "../svm/data.h"
 
@@ -26,5 +25,3 @@ private:
     static bool BaseData_add_row_multiplyed_by_value(const BaseData& data);
 
 };
-
-#endif // TEST_H

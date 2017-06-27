@@ -1,5 +1,4 @@
-#ifndef SVM_H
-#define SVM_H
+#pragma once
 
 /// Question
 /// Is it necessary to check if input data is not empty
@@ -20,6 +19,3 @@ public:
 private:
     SvmData svmData;
 };
-
-
-#endif // SVM_H

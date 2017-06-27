@@ -1,5 +1,4 @@
-#ifndef SPARSE_DATA_H
-#define SPARSE_DATA_H
+#pragma once
 
 #include "data.h"
 
@@ -30,5 +29,3 @@ private:
     int element_idx() const;
     double element_value() const;
 };
-
-#endif // SPARSE_DATA
