@@ -12,29 +12,29 @@ static double empRiskCP(const std::vector<Vec>& a, const std::vector<double>& b,
 static double Omega(const Vec& w);
 
 
-static double empRiskBinary(const BaseData& data,
+static double empRiskBinary(const BaseMatrix& data,
                     const std::vector<int>& firstClassIdx,
                     const std::vector<int>& secondClassIdx,
                     const Vec& w);
 
-static Vec empRiskSubgradientOneClass(const BaseData& data,
+static Vec empRiskSubgradientOneClass(const BaseMatrix& data,
                               const std::vector<int>& classSampleIdx,
                               double y,
                               const Vec& w);
 
-static Vec empRiskSubgradientBinary(const BaseData& data,
+static Vec empRiskSubgradientBinary(const BaseMatrix& data,
                               const std::vector<int>& firstClassIdx,
                               const std::vector<int>& secondClassIdx,
                               const Vec& w);
 
-static Vec TrainBinarySVM(const BaseData& data,
+static Vec TrainBinarySVM(const BaseMatrix& data,
                             const std::vector<int>& firstClassIdx,
                             const std::vector<int>& secondClassIdx,
                             const SvmParams& params);
 
 ////--------------------------------------------------------------------------------
 
-void trainSvm(const BaseData &data, const long *resp, const SvmParams &params, SvmData *svmData)
+void trainSvm(const BaseMatrix &data, const long *resp, const SvmParams &params, SvmData *svmData)
 {
     int& n_classes = svmData->n_classes;
     std::vector<Vec>& betta = svmData->betta;
@@ -67,7 +67,7 @@ void trainSvm(const BaseData &data, const long *resp, const SvmParams &params, S
     }
 }
 
-void predict(const BaseData &data, long *pred, const SvmData &svmData)
+void predict(const BaseMatrix &data, long *pred, const SvmData &svmData)
 {
     int n_classes = svmData.n_classes;
     const std::vector<Vec>& betta = svmData.betta;
@@ -123,7 +123,7 @@ double empRiskCP(const std::vector<Vec>& a, const std::vector<double>& b, const 
 
 
 
-static Vec TrainBinarySVM(const BaseData& data,
+static Vec TrainBinarySVM(const BaseMatrix& data,
                             const std::vector<int>& firstClassIdx,
                             const std::vector<int>& secondClassIdx,
                             const SvmParams& params)
@@ -238,7 +238,7 @@ static Vec TrainBinarySVM(const BaseData& data,
 }
 
 
-static double empRiskBinary(const BaseData& data,
+static double empRiskBinary(const BaseMatrix& data,
                     const std::vector<int>& firstClassIdx,
                     const std::vector<int>& secondClassIdx,
                     const Vec& w)
@@ -261,7 +261,7 @@ static double empRiskBinary(const BaseData& data,
 }
 
 
-static Vec empRiskSubgradientBinary(const BaseData& data,
+static Vec empRiskSubgradientBinary(const BaseMatrix& data,
                               const std::vector<int>& firstClassIdx,
                               const std::vector<int>& secondClassIdx,
                               const Vec& w)
@@ -277,7 +277,7 @@ static Vec empRiskSubgradientBinary(const BaseData& data,
 }
 
 
-Vec empRiskSubgradientOneClass(const BaseData &data,
+Vec empRiskSubgradientOneClass(const BaseMatrix &data,
                               const std::vector<int>& classSampleIdx,
                               double y,
                               const Vec& w)

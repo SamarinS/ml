@@ -1,14 +1,14 @@
-#include "dense_data.h"
+#include "dense_matrix.h"
 
 // ToDo: определить методы:
-// DenseData::LoadFromFile
-// DenseData::print
+// DenseMatrix::LoadFromFile
+// DenseMatrix::print
 
-DenseData::DenseData(const double* ptr, int rows_number, int cols_number, int row_step, int col_step)
-    : BaseData(ptr, rows_number, cols_number), row_step(row_step), col_step(col_step)
+DenseMatrix::DenseMatrix(const double* ptr, int rows_number, int cols_number, int row_step, int col_step)
+    : BaseMatrix(ptr, rows_number, cols_number), row_step(row_step), col_step(col_step)
 {}
 
-double DenseData::multiply_row_by_Vec(int row, const Vec& vec) const
+double DenseMatrix::multiply_row_by_Vec(int row, const Vec& vec) const
 {
     assert(0<=row && row<rows_number);
     assert(int(vec.size()) == cols_number);
@@ -21,7 +21,7 @@ double DenseData::multiply_row_by_Vec(int row, const Vec& vec) const
     return result;
 }
 
-void DenseData::add_row_multiplyed_by_value(Vec& vec, int row, double value) const
+void DenseMatrix::add_row_multiplyed_by_value(Vec& vec, int row, double value) const
 {
     assert(0<=row && row<rows_number);
     assert(int(vec.size()) == cols_number);
@@ -32,7 +32,7 @@ void DenseData::add_row_multiplyed_by_value(Vec& vec, int row, double value) con
     }
 }
 
-void DenseData::print(std::ostream& stream) const
+void DenseMatrix::print(std::ostream& stream) const
 {
     for (int i = 0; i < rows(); i++)
     {
@@ -55,7 +55,7 @@ void DenseData::print(std::ostream& stream) const
     }
 }
 
-DenseData* DenseData::LoadFromFile(std::string filename)
+DenseMatrix* DenseMatrix::LoadFromFile(std::string filename)
 {
     return nullptr;
 }

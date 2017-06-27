@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include "../svm/dense_data.h"
-#include "../svm/sparse_data.h"
+#include "../svm/dense_matrix.h"
+#include "../svm/sparse_matrix.h"
 
 const std::string DATA_FILENAME_STR = "data-filename";
 const std::string TRAIN_PORTION_STR = "train-portion";
@@ -32,7 +32,7 @@ int main(int argc, char** argv)
 
     auto filename = argv[1];
 
-    DenseData* data = DenseData::LoadFromFile(filename);
+    DenseMatrix* data = DenseMatrix::LoadFromFile(filename);
     if (data == nullptr)
     {
         std::cerr << "Error: unable to load data from " << filename << std::endl;

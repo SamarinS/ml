@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../svm/data.h"
+#include "../svm/base_matrix.h"
 
 
 
@@ -11,17 +11,17 @@ public:
     static bool test_svm_w_after_training_on_simple_dense_data();
     static bool test_svm_w_after_training_on_simple_sparse_data();
 
-    // BaseData, DenseData, SparseData
-    static bool DenseData_multiply_row_by_Vec();
-    static bool DenseData_add_row_multiplyed_by_value();
-    static bool DenseData_print();
+    // BaseMatrix, DenseMatrix, SparseMatrix
+    static bool DenseMatrix_multiply_row_by_Vec();
+    static bool DenseMatrix_add_row_multiplyed_by_value();
+    static bool DenseMatrix_print();
 
-    static bool SparseData_multiply_row_by_Vec();
-    static bool SparseData_add_row_multiplyed_by_value();
+    static bool SparseMatrix_multiply_row_by_Vec();
+    static bool SparseMatrix_add_row_multiplyed_by_value();
 
 private:
-    static bool test_svm_w_after_training_on_simple_data(const BaseData& data);
-    static bool BaseData_multiply_row_by_Vec(const BaseData& data);
-    static bool BaseData_add_row_multiplyed_by_value(const BaseData& data);
+    static bool test_svm_w_after_training_on_simple_data(const BaseMatrix& data);
+    static bool BaseMatrix_multiply_row_by_Vec(const BaseMatrix& data);
+    static bool BaseMatrix_add_row_multiplyed_by_value(const BaseMatrix& data);
 
 };

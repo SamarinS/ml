@@ -9,9 +9,9 @@
 class SVM
 {
 public:
-    void Train(const BaseData& data, const long* resp,
+    void Train(const BaseMatrix& data, const long* resp,
                double lambda, double epsilon_abs, double epsilon_tol, int tMax);
-    void Predict(const BaseData& data, long* pred) const;
+    void Predict(const BaseMatrix& data, long* pred) const;
 
     int n_classes() const;
     const std::vector<Vec>& betta() const;

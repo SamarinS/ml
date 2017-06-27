@@ -1,19 +1,19 @@
-#include "sparse_data.h"
+#include "sparse_matrix.h"
 
 // ToDo: определить методы:
-// SparseData::LoadFromFile
-// SparseData::print
+// SparseMatrix::LoadFromFile
+// SparseMatrix::print
 
-SparseData::SparseData(const double *ptr, int rows_number, int cols_number,
+SparseMatrix::SparseMatrix(const double *ptr, int rows_number, int cols_number,
                        const int *indices, int indices_len,
                        const int *indptr, int indptr_len)
-    : BaseData(ptr, rows_number, cols_number),
+    : BaseMatrix(ptr, rows_number, cols_number),
       indices(indices), indices_len(indices_len),
       indptr(indptr), indptr_len(indptr_len)
 {
 }
 
-//double SparseProduct(int rowIdx, SparseData& samples, const Vec& vec)
+//double SparseProduct(int rowIdx, SparseMatrix& samples, const Vec& vec)
 //{
 //    double result = 0.;
 
@@ -33,7 +33,7 @@ SparseData::SparseData(const double *ptr, int rows_number, int cols_number,
 //    return result;
 //}
 
-double SparseData::multiply_row_by_Vec(int row, const Vec& vec) const
+double SparseMatrix::multiply_row_by_Vec(int row, const Vec& vec) const
 {
     double result = 0.0;
 
@@ -49,7 +49,7 @@ double SparseData::multiply_row_by_Vec(int row, const Vec& vec) const
     return result;
 }
 
-void SparseData::add_row_multiplyed_by_value(Vec &vec, int row, double value) const
+void SparseMatrix::add_row_multiplyed_by_value(Vec &vec, int row, double value) const
 {
     set_row(row);
     do
@@ -61,14 +61,14 @@ void SparseData::add_row_multiplyed_by_value(Vec &vec, int row, double value) co
     while(next_element());
 }
 
-void SparseData::set_row(int i) const
+void SparseMatrix::set_row(int i) const
 {
     assert(0<=i && i<indptr_len-1);
     current_index = indptr[i];
     current_row = i;
 }
 
-bool SparseData::next_element() const
+bool SparseMatrix::next_element() const
 {
     assert( (indptr[current_row]<=current_index) && (current_index<indptr[current_row+1]) );
 
@@ -80,24 +80,24 @@ bool SparseData::next_element() const
     return true;
 }
 
-int SparseData::element_idx() const
+int SparseMatrix::element_idx() const
 {
     assert( (indptr[current_row]<=current_index) && (current_index<indptr[current_row+1]) );
     return indices[current_index];
 }
 
-double SparseData::element_value() const
+double SparseMatrix::element_value() const
 {
     assert( (indptr[current_row]<=current_index) && (current_index<indptr[current_row+1]) );
     return ptr[current_index];
 }
 
-void SparseData::print(std::ostream& stream) const
+void SparseMatrix::print(std::ostream& stream) const
 {
-    stream << "print sparse data\n";
+    stream << "print sparse matrix\n";
 }
 
-SparseData* SparseData::LoadFromFile(std::string filename)
+SparseMatrix* SparseMatrix::LoadFromFile(std::string filename)
 { 
     return nullptr;
 }

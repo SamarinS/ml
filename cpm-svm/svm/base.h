@@ -1,7 +1,7 @@
 #pragma once
 
 #include "linear_algebra.h"
-#include "data.h"
+#include "base_matrix.h"
 
 struct SvmParams
 {
@@ -23,6 +23,6 @@ struct SvmData
     int n_classes;
 };
 
-void trainSvm(const BaseData& data, const long* resp, const SvmParams& params,
+void trainSvm(const BaseMatrix& data, const long* resp, const SvmParams& params,
               SvmData* svmData);
-void predict(const BaseData& data, long* pred, const SvmData& svmData);
+void predict(const BaseMatrix& data, long* pred, const SvmData& svmData);

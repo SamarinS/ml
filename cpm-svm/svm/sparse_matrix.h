@@ -1,18 +1,18 @@
 #pragma once
 
-#include "data.h"
+#include "base_matrix.h"
 
-class SparseData : public BaseData
+class SparseMatrix : public BaseMatrix
 {
 public:
-    SparseData(const double* ptr, int rows_number, int cols_number,
+    SparseMatrix(const double* ptr, int rows_number, int cols_number,
                const int* indices, int indices_len,
                const int* indptr, int indptr_len);
     double multiply_row_by_Vec(int row, const Vec& vec) const;
     void add_row_multiplyed_by_value(Vec& vec, int row, double value) const;
     void print(std::ostream& stream) const;
 
-    static SparseData* LoadFromFile(std::string filename);
+    static SparseMatrix* LoadFromFile(std::string filename);
 private:
     const int* indices;
     int indices_len;

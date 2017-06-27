@@ -9,10 +9,10 @@
 /// Empty line??? (multiply_row_by_Vec && add_row_multiplyed_by_value)
 
 
-class BaseData
+class BaseMatrix
 {
 public:
-    BaseData(const double* ptr, int rows_number, int cols_number)
+    BaseMatrix(const double* ptr, int rows_number, int cols_number)
         : ptr(ptr), rows_number(rows_number), cols_number(cols_number) {}
 
     virtual double multiply_row_by_Vec(int row, const Vec& vec) const = 0;
@@ -28,4 +28,4 @@ protected:
     int cols_number;
 };
 
-std::ostream& operator << (std::ostream& stream, const BaseData& data);
+std::ostream& operator << (std::ostream& stream, const BaseMatrix& data);

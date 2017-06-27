@@ -3,7 +3,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 project(svm)
 
-set(SOURCE_LIB base.cpp data.cpp dense_data.cpp sparse_data.cpp
+set(SOURCE_LIB base.cpp base_matrix.cpp dense_matrix.cpp sparse_matrix.cpp
     solve_qp.cpp svm.cpp)
 
 add_library(svm SHARED ${SOURCE_LIB})

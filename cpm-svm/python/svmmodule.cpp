@@ -5,8 +5,8 @@
 #include <cstdint>
 
 #include "../svm/base.h"
-#include "../svm/dense_data.h"
-#include "../svm/sparse_data.h"
+#include "../svm/dense_matrix.h"
+#include "../svm/sparse_matrix.h"
 
 static PyObject *SvmModuleError;
 
@@ -64,7 +64,7 @@ static PyObject* svmmodule_fit(PyObject* self, PyObject* args)
         return NULL;
     }
 
-    DenseData data(
+    DenseMatrix data(
         (const double*)X->data,
         X->dimensions[0],
         X->dimensions[1],
@@ -108,7 +108,7 @@ static PyObject* svmmodule_fit_sparse(PyObject* self, PyObject* args)
         return NULL;
     }
 
-    SparseData data(
+    SparseMatrix data(
         (const double*)X_data->data,
         rows_number,
         cols_number,
@@ -140,7 +140,7 @@ static PyObject* svmmodule_predict(PyObject* self, PyObject* args)
         return NULL;
     }
 
-    DenseData data(
+    DenseMatrix data(
         (const double*)X->data,
         X->dimensions[0],
         X->dimensions[1],
@@ -184,7 +184,7 @@ static PyObject* svmmodule_predict_sparse(PyObject* self, PyObject* args)
         return NULL;
     }
 
-    SparseData data(
+    SparseMatrix data(
         (const double*)X_data->data,
         rows_number,
         cols_number,

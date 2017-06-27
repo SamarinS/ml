@@ -1,13 +1,13 @@
 #include "test.h"
 #include "../svm/svm.h"
-#include "../svm/dense_data.h"
-#include "../svm/sparse_data.h"
+#include "../svm/dense_matrix.h"
+#include "../svm/sparse_matrix.h"
 
 #include <algorithm>
 #include <sstream>
 
-DenseData* get_simple_dense_data();
-SparseData* get_simple_sparse_data();
+DenseMatrix* get_simple_dense_data();
+SparseMatrix* get_simple_sparse_data();
 
 
 
@@ -18,7 +18,7 @@ SparseData* get_simple_sparse_data();
 
 /// class SVM
 
-bool Test::test_svm_w_after_training_on_simple_data(const BaseData &data)
+bool Test::test_svm_w_after_training_on_simple_data(const BaseMatrix &data)
 {
     long resp[] = {0, 0, 1, 1};
 
@@ -31,21 +31,21 @@ bool Test::test_svm_w_after_training_on_simple_data(const BaseData &data)
 
 bool Test::test_svm_w_after_training_on_simple_dense_data()
 {
-    const DenseData* data = get_simple_dense_data();
+    const DenseMatrix* data = get_simple_dense_data();
     return Test::test_svm_w_after_training_on_simple_data(*data);
 }
 
 bool Test::test_svm_w_after_training_on_simple_sparse_data()
 {
-    const SparseData* data = get_simple_sparse_data();
+    const SparseMatrix* data = get_simple_sparse_data();
     return Test::test_svm_w_after_training_on_simple_data(*data);
 }
 
 
 
-/// class BaseData
+/// class BaseMatrix
 
-bool Test::BaseData_multiply_row_by_Vec(const BaseData& data)
+bool Test::BaseMatrix_multiply_row_by_Vec(const BaseMatrix& data)
 {
     Vec v(2);
     v[0] = 3;
@@ -55,7 +55,7 @@ bool Test::BaseData_multiply_row_by_Vec(const BaseData& data)
     return (result == 4);
 }
 
-bool Test::BaseData_add_row_multiplyed_by_value(const BaseData& data)
+bool Test::BaseMatrix_add_row_multiplyed_by_value(const BaseMatrix& data)
 {
     Vec v(2);
     v[0] = 1;
@@ -68,23 +68,23 @@ bool Test::BaseData_add_row_multiplyed_by_value(const BaseData& data)
 
 
 
-/// class DenseData
+/// class DenseMatrix
 
-bool Test::DenseData_multiply_row_by_Vec()
+bool Test::DenseMatrix_multiply_row_by_Vec()
 {
-    DenseData* data = get_simple_dense_data();
-    return BaseData_multiply_row_by_Vec(*data);
+    DenseMatrix* data = get_simple_dense_data();
+    return BaseMatrix_multiply_row_by_Vec(*data);
 }
 
-bool Test::DenseData_add_row_multiplyed_by_value()
+bool Test::DenseMatrix_add_row_multiplyed_by_value()
 {
-    DenseData* data = get_simple_dense_data();
-    return BaseData_add_row_multiplyed_by_value(*data);
+    DenseMatrix* data = get_simple_dense_data();
+    return BaseMatrix_add_row_multiplyed_by_value(*data);
 }
 
-bool Test::DenseData_print()
+bool Test::DenseMatrix_print()
 {
-    DenseData* data = get_simple_dense_data();
+    DenseMatrix* data = get_simple_dense_data();
     std::stringstream ss;
     data->print(ss);
 
@@ -93,18 +93,18 @@ bool Test::DenseData_print()
     return ss.str() == expected;
 }
 
-/// class SparseData
+/// class SparseMatrix
 
-bool Test::SparseData_multiply_row_by_Vec()
+bool Test::SparseMatrix_multiply_row_by_Vec()
 {
-    SparseData* data = get_simple_sparse_data();
-    return BaseData_multiply_row_by_Vec(*data);
+    SparseMatrix* data = get_simple_sparse_data();
+    return BaseMatrix_multiply_row_by_Vec(*data);
 }
 
-bool Test::SparseData_add_row_multiplyed_by_value()
+bool Test::SparseMatrix_add_row_multiplyed_by_value()
 {
-    SparseData* data = get_simple_sparse_data();
-    return BaseData_add_row_multiplyed_by_value(*data);
+    SparseMatrix* data = get_simple_sparse_data();
+    return BaseMatrix_add_row_multiplyed_by_value(*data);
 }
 
 
@@ -112,7 +112,7 @@ bool Test::SparseData_add_row_multiplyed_by_value()
 /// helper functions ///
 ////////////////////////
 
-DenseData* get_simple_dense_data()
+DenseMatrix* get_simple_dense_data()
 {
     const int n_samples = 4;
     const int n_vars = 2;
@@ -125,11 +125,11 @@ DenseData* get_simple_dense_data()
     int row_step = 2*sizeof(double);
     int col_step = sizeof(double);
 
-    static DenseData data(data_array, n_samples, n_vars, row_step, col_step);
+    static DenseMatrix data(data_array, n_samples, n_vars, row_step, col_step);
     return &data;
 }
 
-SparseData* get_simple_sparse_data()
+SparseMatrix* get_simple_sparse_data()
 {
     const int n_samples = 4;
     const int n_vars = 2;
@@ -140,6 +140,6 @@ SparseData* get_simple_sparse_data()
     static int indptr[] = {0,1,2,3,4};
     int indptr_len = 5;
 
-    static SparseData data(ptr, n_samples, n_vars, indices, indices_len, indptr, indptr_len);
+    static SparseMatrix data(ptr, n_samples, n_vars, indices, indices_len, indptr, indptr_len);
     return &data;
 }
