@@ -36,6 +36,8 @@ static Vec TrainBinarySVM(const BaseMatrix& data,
 
 void trainSvm(const BaseMatrix &data, const long *resp, const SvmParams &params, SvmData *svmData)
 {
+    long long training_time = -gettimeus();
+
     int& n_classes = svmData->n_classes;
     std::vector<Vec>& betta = svmData->betta;
 
@@ -65,6 +67,11 @@ void trainSvm(const BaseMatrix &data, const long *resp, const SvmParams &params,
             betta.push_back(w);
         }
     }
+
+    training_time += gettimeus();
+    #ifdef BMRM_INFO
+    std::cout << "trainSvm time: " << double(training_time)/1000000 << " seconds" << std::endl;
+    #endif
 }
 
 void predict(const BaseMatrix &data, long *pred, const SvmData &svmData)
@@ -143,37 +150,20 @@ static Vec TrainBinarySVM(const BaseMatrix& data,
     std::vector<Vec> a;
     std::vector<double> b;
     std::vector<double> gram_memory;
+    double currentEmpRiskValue = empRiskBinary(data, firstClassIdx, secondClassIdx, w);
 
 
     do
     {
+        long long time_iteration = -gettimeus();
+
         t++;
 
         long long time_a = -gettimeus();
         a.push_back( empRiskSubgradientBinary(data, firstClassIdx, secondClassIdx, w) );
         time_a += gettimeus();
 
-
-        long long time_b = -gettimeus();
-        b.push_back(
-                    empRiskBinary(data, firstClassIdx, secondClassIdx, w) - inner_prod(w, a.back())
-                   );
-        time_b += gettimeus();
-
-#ifdef BMRM_INFO
-        std::cout << std::endl << "Iteration " << t << std::endl;
-//        cout << "empRisk(w) = " << empRisk(data, w) << endl;
-
-
-        std::cout << "Subgradient calculating time: " << double(time_a)/1000000 << " seconds" << std::endl;
-        std::cout << "Coef calculating time: " << double(time_b)/1000000 << " seconds" << std::endl;
-
-//        cout << "w[" << t-1 << "] = " << w << endl;
-//        cout << "a[" << t << "] = " << a.back() << endl;
-//        cout << "b[" << t << "] = " << b.back() << endl;
-#endif
-
-
+        b.push_back(currentEmpRiskValue - inner_prod(w, a.back()));
 
         //==========================================
         // argmin begin
@@ -184,9 +174,6 @@ static Vec TrainBinarySVM(const BaseMatrix& data,
         SolveQP(gram_memory, a, b, lambda, epsilon_tol*0.5, alpha);
         time_qp += gettimeus();
 
-
-
-
         // Получение w из alpha
         Vec temp(d);
         std::fill(temp.begin(), temp.end(), 0);
@@ -196,8 +183,25 @@ static Vec TrainBinarySVM(const BaseMatrix& data,
         }
         w = -temp/lambda;
 
+        long long time_empRisk = -gettimeus();
+        currentEmpRiskValue = empRiskBinary(data, firstClassIdx, secondClassIdx, w);
+        time_empRisk += gettimeus();
+
 #ifdef BMRM_INFO
-        std::cout << "J(w) = " << lambda*Omega(w)+empRiskBinary(data, firstClassIdx, secondClassIdx, w) << std::endl;
+        std::cout << std::endl << "Iteration " << t << std::endl;
+//        cout << "empRisk(w) = " << empRisk(data, w) << endl;
+
+
+        std::cout << "Subgradient calculating time: " << double(time_a)/1000000 << " seconds" << std::endl;
+        std::cout << "Emp risk calculating time: " << double(time_empRisk)/1000000 << " seconds" << std::endl;
+
+//        cout << "w[" << t-1 << "] = " << w << endl;
+//        cout << "a[" << t << "] = " << a.back() << endl;
+//        cout << "b[" << t << "] = " << b.back() << endl;
+#endif
+
+#ifdef BMRM_INFO
+        std::cout << "J(w) = " << lambda*Omega(w)+currentEmpRiskValue << std::endl;
 //        cout << "EmpRisk(w) = " << empRisk(data, w) << endl;
 //        cout << "EmpRiskCP(w) = " << empRiskCP(a, b, w) << endl;
 #endif
@@ -206,7 +210,7 @@ static Vec TrainBinarySVM(const BaseMatrix& data,
         //==========================================
 
 
-        currentEps = empRiskBinary(data, firstClassIdx, secondClassIdx, w) - empRiskCP(a, b, w);
+        currentEps = currentEmpRiskValue - empRiskCP(a, b, w);
 
 #ifdef BMRM_INFO
         std::cout << "QP solving time: " << double(time_qp)/1000000 << " seconds" << std::endl;
@@ -214,12 +218,20 @@ static Vec TrainBinarySVM(const BaseMatrix& data,
         std::cout << "Current epsilon = " << currentEps << std::endl;
 #endif
 
+        bool continueFlag =
+                currentEps>epsilon_abs
+                && currentEps>epsilon_tol*(lambda*Omega(w)+currentEmpRiskValue)
+                && t<tMax;
+
+        time_iteration += gettimeus();
+
+#ifdef BMRM_INFO
+        std::cout << "iteration time: " << double(time_iteration)/1000000 << std::endl;
+#endif
+
+        if (!continueFlag) break;
     }
-    while(
-          currentEps>epsilon_abs
-          && currentEps>epsilon_tol*(lambda*Omega(w)+empRiskBinary(data, firstClassIdx, secondClassIdx, w))
-          && t<tMax
-         );
+    while(true);
 
 
 #ifdef BMRM_INFO
@@ -266,8 +278,6 @@ static Vec empRiskSubgradientBinary(const BaseMatrix& data,
                               const std::vector<int>& secondClassIdx,
                               const Vec& w)
 {
-    empRiskSubgradientOneClass(data, firstClassIdx, 1.0, w);
-
     Vec subgr =
             empRiskSubgradientOneClass(data, firstClassIdx, 1.0, w) +
             empRiskSubgradientOneClass(data, secondClassIdx, -1.0, w);
