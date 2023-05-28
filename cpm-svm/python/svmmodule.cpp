@@ -1,3 +1,4 @@
+#define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #include <numpy/arrayobject.h>
 
@@ -216,18 +217,24 @@ static PyMethodDef SvmModuleMethods[] = {
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
+static struct PyModuleDef svmmodule = {
+    PyModuleDef_HEAD_INIT,
+    "svmmodule",   /* name of module */
+    "svmmodule_doc", /* module documentation, may be NULL */
+    -1,       /* size of per-interpreter state of the module,
+                 or -1 if the module keeps state in global variables. */
+    SvmModuleMethods
+};
+
 PyMODINIT_FUNC
-initsvmmodule(void)
+PyInit_svmmodule(void)
 {
     PyObject *m;
 
-    m = Py_InitModule("svmmodule", SvmModuleMethods);
+    m = PyModule_Create(&svmmodule);
     if (m == NULL)
-        return;
-
+        return NULL;
     import_array();
 
-    SvmModuleError = PyErr_NewException("svmmodule.error", NULL, NULL);
-    Py_INCREF(SvmModuleError);
-    PyModule_AddObject(m, "error", SvmModuleError);
+    return m;
 }

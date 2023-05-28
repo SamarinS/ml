@@ -30,9 +30,9 @@ def experiment(data, model, tuned_params, verbosity=100):
     model(**clf.best_params_).fit(X_train, y_train)
     exec_time = time.time() - start_time
     
-    print "score:", clf.score(X_test, y_test)
-    print "best_params:", clf.best_params_
-    print "time(sec):", exec_time
+    print("score:", clf.score(X_test, y_test))
+    print("best_params:", clf.best_params_)
+    print("time(sec):", exec_time)
     
     for params, mean_score, scores in clf.grid_scores_:
         print("%0.3f (+/-%0.03f) for %r"
@@ -50,15 +50,15 @@ def split_data(X, y):
     from sklearn.cross_validation import train_test_split
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=1)
     
-    print "n_samples:", X.shape[0]
-    print "n_vars", X.shape[1]
-    print "n_classes", np.unique(y).shape[0]
+    print("n_samples:", X.shape[0])
+    print("n_vars", X.shape[1])
+    print("n_classes", np.unique(y).shape[0])
     return {"X_train":X_train, "X_test":X_test, "y_train":y_train, "y_test":y_test}
 
 def load_uci_data(name, d=','):
     name = '/home/sergey/uci_data/'+name  
     data = np.loadtxt(name, delimiter=d)
-    print "dataset:", name
+    print("dataset:", name)
     X = data[:,:-1]
     y = data[:,-1]
     return split_data(X, y)
@@ -69,7 +69,7 @@ def load_libsvm_data(name):
     
     name = '/home/sergey/libsvm_data/'+name
     X, y = load_svmlight_file(name)
-    print "dataset:", name
+    print("dataset:", name)
     return split_data(X, y)
     
 

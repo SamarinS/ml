@@ -36,6 +36,6 @@ clf = CPM_SVM()
 clf.fit(X, actual)
 pred = clf.predict(X)
 
-print "pred =", pred
+print("pred =", pred)
 plot(X, pred)
 
