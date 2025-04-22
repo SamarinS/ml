@@ -31,7 +31,7 @@ static PyArrayObject* getBetta(const SvmData& svmData)
     npy_intp dim2 = svmData.betta[0].size();
     npy_intp dimensions[n_dimensions] = {dim1, dim2};
     PyArrayObject* obj = (PyArrayObject*)PyArray_SimpleNew(
-        n_dimensions, dimensions, PyArray_DOUBLE);
+        n_dimensions, dimensions, NPY_DOUBLE);
 
     for (std::vector<Vec>::size_type i = 0;i<svmData.betta.size();i++)
     {
@@ -152,7 +152,7 @@ static PyObject* svmmodule_predict(PyObject* self, PyObject* args)
     int n_dimensions = 1;
     npy_intp dimensions[n_dimensions] = {X->dimensions[0]};
     PyArrayObject* obj = (PyArrayObject*)PyArray_SimpleNew(
-        n_dimensions, dimensions, PyArray_LONG);
+        n_dimensions, dimensions, NPY_LONG);
 
     SvmData svmData;
     setBetta(&svmData, betta);
@@ -198,7 +198,7 @@ static PyObject* svmmodule_predict_sparse(PyObject* self, PyObject* args)
     int n_dimensions = 1;
     npy_intp dimensions[n_dimensions] = {(npy_intp)rows_number};
     PyArrayObject* obj = (PyArrayObject*)PyArray_SimpleNew(
-        n_dimensions, dimensions, PyArray_LONG);
+        n_dimensions, dimensions, NPY_LONG);
 
     SvmData svmData;
     setBetta(&svmData, betta);
