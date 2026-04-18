@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 from cpm_svm import CPM_SVM
 
+# Минимальный тест для обучающей выборки с 3-мя классами
+
 def plot(X, y):
     red_x = []
     red_y = []
@@ -36,6 +38,7 @@ clf = CPM_SVM()
 clf.fit(X, actual)
 pred = clf.predict(X)
 
-print("pred =", pred)
+print("actual    =", actual)
+print("predicted =", pred)
 plot(X, pred)
 
