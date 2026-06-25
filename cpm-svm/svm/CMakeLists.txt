@@ -3,6 +3,9 @@ set(CMAKE_CXX_STANDARD 11)
 
 project(svm)
 
+# Uncomment to show BMRM running info
+# add_compile_definitions(BMRM_INFO)
+
 set(SOURCE_LIB base.cpp base_matrix.cpp dense_matrix.cpp sparse_matrix.cpp
     solve_qp.cpp svm.cpp)
 

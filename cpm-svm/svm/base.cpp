@@ -159,6 +159,10 @@ static Vec TrainBinarySVM(const BaseMatrix& data,
 
         t++;
 
+#ifdef BMRM_INFO
+        std::cout << std::endl << "Iteration " << t << std::endl;
+#endif
+
         long long time_a = -gettimeus();
         a.push_back( empRiskSubgradientBinary(data, firstClassIdx, secondClassIdx, w) );
         time_a += gettimeus();
@@ -188,7 +192,6 @@ static Vec TrainBinarySVM(const BaseMatrix& data,
         time_empRisk += gettimeus();
 
 #ifdef BMRM_INFO
-        std::cout << std::endl << "Iteration " << t << std::endl;
 //        cout << "empRisk(w) = " << empRisk(data, w) << endl;
 
 

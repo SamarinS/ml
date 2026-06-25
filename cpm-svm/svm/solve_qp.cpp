@@ -6,6 +6,10 @@
 #include <iostream>
 #endif //BMRM_INFO
 
+#ifdef BMRM_DEBUG_GRAM_MATRIX
+#include <fstream>
+#endif // BMRM_DEBUG_GRAM_MATRIX
+
 
 typedef double Real;
 
@@ -60,12 +64,38 @@ void SolveQP(std::vector<double> &gram_memory, std::vector<Vec>& a, std::vector<
             H(j,i) = H(i,j);
         }
     }
+
+#ifdef BMRM_DEBUG_GRAM_MATRIX
+    for(int i = 0;i<n;i++)
+    {
+        H(i,i) += 0.5*n;
+    }
+#endif // BMRM_DEBUG_GRAM_MATRIX
+
 #ifdef BMRM_INFO
     time_Hnn_calc += gettimeus();
 #endif //BMRM_INFO
     ///===========================
     /// end calculating matrix H
     /// ==========================
+
+#ifdef BMRM_DEBUG_GRAM_MATRIX
+    {
+        std::ofstream hFile("H_n_" + std::to_string(n) + ".txt");
+        if(hFile.is_open())
+        {
+            for(int i = 0;i<n;i++)
+            {
+                for(int j = 0;j<n;j++)
+                {
+                    if(j > 0) hFile << ' ';
+                    hFile << H(i,j);
+                }
+                hFile << '\n';
+            }
+        }
+    }
+#endif // BMRM_DEBUG_GRAM_MATRIX
 
     Vec b_minus_H_alpha = bVec - prod(H, alpha);
 
